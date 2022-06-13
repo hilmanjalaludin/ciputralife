@@ -1,0 +1,760 @@
+/* default styles
+   -------------- */
+   
+html{
+	background-color: #ffffff;
+}
+body {
+  background: #ffffff;
+  font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
+  color: #000000;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  font-size: 11pt;
+ 
+}
+a {	color: #E0691A;	background: inherit;}
+a:hover { color: #6C757A; background: inherit; }
+
+h1 { font: normal 2.4em "Trebuchet MS", Arial, Sans-Serif; padding: 1px 0 0 8px; margin: 0; }
+h1 a { color: #737373; background: inherit; }
+.le-frog { color: #285C00; }
+sup { font-size: .5em; }
+
+h1 a, h2 a { color: #FF6600; text-decoration: none; }
+h1 a:hover, h2 a:hover { color: #FF6600; background: inherit; }
+h2 { font-size: 1.5em; margin-bottom: 5px; color: #000; background: inherit; }
+p {	margin: 0 0 5px 0; }
+
+ul { list-style : none; }
+
+#loading { position: absolute; top: 40%; left: 40%; width:50px; padding: 5px 10px; font: 13px Arial; z-index:2;}
+
+/* layout
+   -------------- */
+#wrapper {
+	margin: 0 auto;
+	position: relative;
+}
+#header {
+	height: 40px;
+	background: #fff url(../gambar/headerbg.gif) repeat-x bottom;
+	color: #808080;
+	margin: 2px 0 0 0;
+	padding: 2px 0 0 0;
+	font-size: 1.1em;
+}
+#left_menu {
+	width: 300px;
+	color: #ff0000;
+	margin-bottom: 20px;
+	border-right: 1px dotted #999999;
+	float: left;
+	overflow:auto;
+}
+#main_content {
+	
+	color: #000000;
+	
+	padding: 5px;
+	font-size: 1.1em;
+}
+#foot {
+	font-size: 1.1em;
+	line-height: 2.8em;
+	height: 36px;
+	text-align: center;
+	border:1px dotted #808080;
+	position:absolute;
+	/*background: #fff url(../gambar/headerbg.gif) repeat-x bottom;*/
+	bottom:0;
+	width: 99.8%;
+	overflow:auto;
+}
+.table {
+	display: table;
+}
+.table_row {
+	display: table-row;
+}
+.table_cell {
+	display: table-cell;
+}
+
+#accordion {
+	padding: 4px;
+	width: 190px;
+}
+#accordions {
+	padding:0px 4px 4px 4px;
+	width: 190px;
+}
+#split {
+	height:280px;
+	width:200px;
+	border:1px dotted #999;
+	margin-top : 5px;
+	overflow:auto;
+}
+.menu {
+}
+.menu ul, .menu ul li {
+	display: inline;
+	font-size: 1em;
+	text-align: center;
+	line-height: 25px;
+	list-style-type: none;
+	margin:0;
+	padding:0;
+}
+.menu ul {
+	height:25px;
+}
+.menu ul li a {
+	display: block;
+	background:transparent url(../images/menu_bg.png) no-repeat scroll center bottom;
+	color:#aaaaaa;
+	height:25px;
+	text-decoration:none;
+}
+.menu ul li.selected a {
+	color:#ff6600;
+	background:transparent url(../images/menu_bg_hover.png) no-repeat scroll center bottom;
+}
+.menu ul li.last a {
+	background: none;
+}
+input.exportbtn { 
+		background: #E0691A url(../gambar/exprt.gif) no-repeat;
+		border: 0;
+		padding: 0 0 0 20px;
+		width: 65px;
+		height: 16px;
+		margin: 0 0 0 0;
+		color: #FFF;
+		font: bold 1em Arial, Sans-Serif;
+		font-size:10px;
+		text-align:left;
+		
+		}
+.menu ul li a:hover {
+	color:#ff6600;
+	background:transparent url(../images/menu_bg_hover.png) no-repeat scroll center bottom;
+}
+.menu ul li.last a:hover {
+	color:#ff6600;
+	background: none;
+}
+.top_logo {
+	padding: 2px 0 2px 0;
+	color: #808080;
+	float: left;
+}
+
+	.top_logo_left {
+		float: left;
+	}
+	
+	.top_logo_right {
+		padding: 0 0 0 35px;
+		float: right;
+	}
+	
+.top_info {
+	width: 555px;
+	padding: 2px 0 2px 0;
+	color: #808080;
+	float: right;
+}
+
+	.top_info_left {
+		width: 250px;
+		float: left;
+	}
+	
+	.top_info_right {
+		
+		width: 290px;
+		padding: 0 0 0 0;
+		float: right;
+	}
+	
+.content_table {
+	/*background: #f5f5f5;*/
+	color: #414141;
+	padding: 8px;	
+	margin: 1px 0px 1px 0px;
+}
+
+.content_table_pod_dup {
+	background: #f5f5f5;
+	color: #414141;
+	padding: 8px;	
+	margin: 1px 0px 1px 0px;
+	overflow:scroll;
+}
+
+.list_table {
+	background: #f5f5f5;
+	color: #414141;
+	padding: 0 0 0 0;	
+	margin: 0 0 0 0;
+}
+/* filter form 
+----------------------------------*/
+.filter { 
+  background: #eee;
+	color: #808080;
+	padding:  2px 0 2px 10px;
+	margin: 0 0 0 0;
+}
+
+.divcontent{
+	color: #808080;
+	padding:  2px 0 2px 10px;
+	margin: 0 0 0 0;
+}
+.filter .filter { font-size: 1em; }
+.filter input, .filter textarea { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 14px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.filter select { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.filter button { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+
+
+.divcontent button {
+	border: 1px solid #d0d0d0;
+	height: 20px;
+	color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+/* activity form 
+----------------------------------*/
+.activity { 
+  padding:  0px 0 0px 10px;
+	margin: 0 0 0 0;
+}
+
+.activity .activity { font-size: 1em; }
+.activity input { 
+  /*background: url(../gambar/side_col_bg.png)  top left repeat-x ;
+  border: 1px solid #d0d0d0;
+  height: 14px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;*/
+}
+.activity select { 
+ 
+  height: 17px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.activity button { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+/* formulir 
+----------------------------------*/
+.formulir { 
+  padding:  0px 0 0px 10px;
+	margin: 0 0 0 0;
+}
+.formulir .formulir { font-size: 1em; }
+.formulir input, .formulir textarea { 
+  border: 1px solid #d0d0d0;
+  height: 14px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+.formulir select { 
+  border: 0px;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.formulir button { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+.attention {font-size: 8pt; color: #ff0000}
+
+/* dial form 
+----------------------------------*/
+.dial { 
+	padding:  0px 0 0px 10px;
+	margin: 0 0 0 0;
+}
+.dial .dial { font-size: 1em; }
+.dial input, .dial textarea { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 14px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.dial select { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.dial button { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.call_submit {
+	background:url(../gambar/dial-icon.png) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 85px;
+	height: 22px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+  
+.call_hang_up {
+	background:url(../gambar/hang_up.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 85px;
+	height: 22px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+input.submit { 
+  background: #E0691A url(../gambar/submit.gif) no-repeat;
+	border: 0;
+	padding: 4px 0;
+	width: 120px;
+	margin: 0 10px 1px 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+	vertical-align: middle;
+}
+
+.filter-content { border: 1px solid #72b42d; background: #285c00 url(images/ui-bg_inset-soft_10_285c00_1x100.png) 50% bottom repeat-x; color: #ffffff; }
+.filter-content a { color: #ffffff; }
+.filter-header { border: 1px solid #3f7506; background: #3a8104 url(images/ui-bg_highlight-soft_33_3a8104_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
+.filter-header a { color: #ffffff; }
+
+.grey { color: #808080; background: inherit; font-weight: normal; }
+.filter_form { float: right; }
+
+
+
+
+/* Login
+   ----- */
+.pager {
+  padding: 0px;	
+	margin: 0 0 0 0;
+	float:right;
+}
+
+#secCol {
+width: 320px;
+float: right;
+margin: 300px;
+padding: 0px;
+text-align: center;
+color: #FFF;
+}
+
+
+fieldset#login {
+background: url(../gambar/login_bg.png) no-repeat top left;
+margin: 10px auto;
+padding: 5px 5px 5px 5px;
+width: 280px;
+height: 179px;
+border: none;
+color: #FFF;
+}
+#login h4 {
+font-size: 18px;
+font-weight: normal;
+font-family: Cambria, Georgia, "Times New Roman", Times, serif;
+width: 246px;
+height: 30px;
+padding: 10px 0px 0px 30px;
+margin: 0px;
+text-align: left;
+}
+#login form {
+height: 95px;
+width: 276px;
+padding: 10px 10px 0px 0px;
+margin: 0px;
+}
+#login form p label {
+text-align: left;
+margin-left: 0.5em;
+float: left;
+font-size: 14px;
+}
+#login form p.check {
+padding-left: 77px;
+width: 199px;
+height: 23px;
+}
+#login #remlabel {
+float: left;
+font-size: 10px;
+position: relative;
+left: -3px;
+}
+#login #submit {
+	background: #E0691A url(../gambar/submit.gif) no-repeat;
+	border: 0;
+	padding: 0px 0;
+	width: 65px;
+	height: 24px;
+	cursor: pointer;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+	float: right;
+}
+#login #username, #login #password {
+background: url(../gambar/input_bg.png) no-repeat top left;
+border: 1px solid #d0d0d0;
+width: 192px;
+height: 15px;
+padding: 2px;
+color: #222222;
+font-size: 14px;
+float: right;
+margin-bottom: 10px;
+}
+#login p.member {
+text-align: left;
+width: 270px;
+font-size: 11px;
+font-family: Arial, Helvetica, sans-serif;
+margin: 2px 2px 0px 2px;
+padding: 2px;
+line-height: 18px;
+}
+
+#secCol2 {
+width: 620px;
+float: right;
+margin: 300px;
+padding: 0px;
+text-align: center;
+color: #FFF;
+}
+
+fieldset#login2 {
+background: url(../gambar/pw_bg.png) no-repeat top left;
+margin: 10px auto;
+padding: 5px 5px 5px 5px;
+width: 340px;
+height: 210px;
+border: none;
+color: #FFF;
+}
+
+#login2 h4 {
+font-size: 18px;
+font-weight: normal;
+font-family: Cambria, Georgia, "Times New Roman", Times, serif;
+width: 246px;
+height: 30px;
+padding: 10px 0px 0px 30px;
+margin: 0px;
+text-align: left;
+}
+#login2 form {
+height: 95px;
+width: 276px;
+padding: 10px 10px 0px 0px;
+margin: 0px;
+}
+#login2 form p label {
+text-align: left;
+margin-left: 0.5em;
+float: left;
+font-size: 14px;
+}
+#login2 form p.check {
+padding-left: 77px;
+width: 199px;
+height: 23px;
+}
+#login2 #remlabel {
+float: left;
+font-size: 10px;
+position: relative;
+left: -3px;
+}
+#login2 #submit {
+	background: #E0691A url(../gambar/submit.gif) no-repeat;
+	border: 0;
+	padding: 0px 0;
+	width: 65px;
+	height: 24px;
+	cursor: pointer;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+	float: right;
+}
+#login2 #username, #login2 #password {
+background: url(../gambar/input_bg.png) no-repeat top left;
+border: 1px solid #d0d0d0;
+width: 192px;
+height: 15px;
+padding: 2px;
+color: #222222;
+font-size: 14px;
+float: right;
+margin-bottom: 10px;
+}
+#login2 p.member {
+text-align: left;
+width: 270px;
+font-size: 11px;
+font-family: Arial, Helvetica, sans-serif;
+margin: 2px 2px 0px 2px;
+padding: 2px;
+line-height: 18px;
+}
+
+.clearfix:after {
+content:".";
+display:block;
+height:0;
+clear:both;
+visibility:hidden;
+}
+.clearfix {display:inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix { height:1%; }
+.clearfix {display:block;}
+/* End hide from IE-mac */
+
+select.general { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 20px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+
+input.fax_submit {
+	background: #E0691A url(../gambar/resend_per_page.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 130px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+input.fax_resend {
+	background: #E0691A url(../gambar/resend_per_page.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 130px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+input.print_submit {
+	background: #E0691A url(../gambar/print.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 65px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+input.call_submit {
+	background: #E0691A url(../gambar/call.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 65px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+  
+input.call_hang_up {
+	background: #E0691A url(../gambar/hang_up.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 75px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+input.form_save {
+	background: #E0691A url(../gambar/save.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 65px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+input.list_search {
+	background: #E0691A url(../gambar/search.gif) no-repeat;
+	border: 0;
+	padding: 0 0 0 15px;
+	width: 65px;
+	height: 16px;
+	margin: 0 0 0 0;
+	color: #FFF;
+	font: bold 1em Arial, Sans-Serif;
+}
+
+/* report filter form 
+----------------------------------*/
+.rptfilter { 
+  background: #eee;
+	color: #808080;
+	padding:  2px 0 2px 10px;
+	margin: 0 0 0 0;
+}
+.rptfilter .rptfilter { font-size: 1em; }
+.rptfilter input, .rptfilter textarea { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 14px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.rptfilter select { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;  
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+.rptfilter button { 
+  background: url(../gambar/input_bg.png) no-repeat top left;
+  border: 1px solid #d0d0d0;
+  height: 25px;
+  color: #222222;
+	font-size: 11px;
+	font-family: Arial, Helvetica, sans-serif;
+	vertical-align: middle;
+}
+#left_menu ul li a{ color: #FF6600; text-decoration: none; }
+#left_menu ul li a:hover{ color: #FF6600;font-size:11px;color:blue;}
+
+	/*Credits: Dynamic Drive CSS Library */
+/*URL: http://www.dynamicdrive.com/style/ */
+
+a.sbutton{
+background: transparent url(../gambar/square-blue-left.gif) no-repeat top left;
+display: block;
+float: left;
+font: normal 12px Arial; /* Change 12px as desired */
+line-height: 15px; /* This value + 4px + 4px (top and bottom padding of SPAN) must equal height of button background (default is 23px) */
+height: 23px; /* Height of button background height */
+padding-left: 9px; /* Width of left menu image */
+text-decoration: none;
+}
+
+a:link.sbutton, a:visited.sbutton, a:active.sbutton{
+color: #494949; /*button text color*/
+}
+
+a.sbutton span{
+background: transparent url(../gambar/square-blue-right.gif) no-repeat top right;
+display: block;
+padding: 4px 9px 4px 0; /*Set 9px below to match value of 'padding-left' value above*/
+}
+
+a.sbutton:hover{ /* Hover state CSS */
+background-position: bottom left;
+}
+
+a.sbutton:hover span{ /* Hover state CSS */
+background-position: bottom right;
+color: black;
+}
+
+.divbutton{ /* Container you can use to surround a CSS button to clear float */
+overflow: hidden; /*See: http://www.quirksmode.org/css/clearing.html */
+width: 100%;
+}
+.chatLine{
+	border-bottom:1px dotted blue;
+	padding:5px;
+	
+}

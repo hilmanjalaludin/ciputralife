@@ -1,0 +1,360 @@
+<?php
+	require("../fungsi/global.php");
+	require("../class/MYSQLConnect.php");
+	require("../class/class.list.table.php");
+	require 'Export/PHPExcel.php';
+	require 'Export/PHPExcel/IOFactory.php';
+	$connect = new mysql();
+	
+	
+	
+	
+	$start_date = $_REQUEST['start_date'];
+	$end_date = $_REQUEST['end_date'];
+	$prodid = $_REQUEST['prodid'];
+	$Campaign = $_REQUEST['Campaign'];
+	$exported = $_REQUEST['exported'];
+	$query = $_REQUEST['query'];
+	$query_check = $_REQUEST['query_check'];
+	
+	$objPHPExcel = new PHPExcel();
+	
+	if ($prodid) {
+		$productName = getProductName($prodid, new mysql());
+	}
+	else
+		$productName = 'All active product';
+	
+	function getProductName($prodid, $dbase)
+	{
+		$sql = " select pr.ProductName from t_gn_product pr
+		where pr.ProductCode='$prodid' ";
+		$te = $dbase->query($sql);
+		$te2 = $te->result_object();
+		// print_r($_REQUEST);
+		return $te2[0]->ProductName;
+	}
+	
+	// Create a first sheet, representing sales data
+	$objPHPExcel->setActiveSheetIndex(0);
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A1', 'INPUT Date :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B1', $start_date);
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C1', 'TO :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D1', $end_date);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A2', 'Product ID');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B2', $prodid);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A3', 'Product Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B3', $productName);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A5', 'No.');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B5', 'Form Number');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C5', 'Insured Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D5', 'Insured DOB');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('E5', 'Sex');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('F5', 'Address1');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('G5', 'Address2');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('H5', 'City');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('I5', 'RT DAN RW');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('J5', 'Zip Code');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('K5', 'Phone1');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('L5', 'Phone2');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('M5', 'Ext. Phone2');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('N5', 'Mobile Phone');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('O5', 'Marital Status');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('P5', 'Children');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('Q5', 'FA Code');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('R5', 'Activation Date');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('S5', 'Branch Code');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('T5', 'CS. Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('U5', 'ACC Holder Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('V5', 'ACC Number');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('W5', 'ACC Branch');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('X5', 'Program');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('Y5', 'Email');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('Z5', 'Asken');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AA5', 'Region');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AB5', 'Nama LG');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AC5', 'ID Staff Bank');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AD5', 'OperId');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AE5', 'SellerId');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AF5', 'SPV Id');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AG5', 'AM Id');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AH5', 'TSM Id');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AI5', 'Product Id');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AJ5', 'Exp. Date');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AK5', 'Exp. Card');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AL5', 'Period');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('AM5', 'Premium Amout');
+	// Rename sheet
+	$insured ="
+				SELECT DISTINCT 
+				concat(date_format(plc.PolicySalesDate,'%d/%m/%y'), '-', pa.PolicyNumber) 
+			 	AS FormNumber,
+				concat(ins.InsuredFirstName, ins.InsuredLastName) as InsuredName,
+				date_format(ins.InsuredDOB,'%Y-%m-%d') as InsuredDOB,
+				g.GenderId as sex,
+				py.PayerAddressLine1 as Address1,
+				py.PayerAddressLine2 as Address2,
+				py.PayerCity as City,
+				cst.pros_Refnumber AS Refnumber,
+				py.PayerZipCode as ZipCode,
+				py.PayerHomePhoneNum as Phone1,
+				py.PayerOfficePhoneNum as Phone2,
+				'' as EXTPhone2,
+				py.PayerMobilePhoneNum as MobilePhone,
+				'' as MaritalStatus,
+				'' as Children,
+				'' as FACode,
+				date_format(plc.PolicySalesDate, '%Y-%m-%d') as Activation_Date,
+				'' as BranchCode,
+				'' as CSName,
+				ins.InsuredFirstName as ACCHolderName,
+				'' as ACCNumber,				
+				'' as ACCBranch,
+				'' as Program,
+				py.PayerEmail as Email,
+				'' as Asken,
+				'' as Region,
+				'' as NamaLG,
+				'' as IDStaffBank,
+				agt.init_name as operid,
+				agt.id as sellerid,
+				agt.spv_id as spv_id,
+				agt.mgr_id as am_id,
+				'' as tsm_id,
+				date_format(plc.PolicySalesDate, '%Y-%m-%d') + interval '3' month as EXPDate,
+				'' as EXPCard,
+				prd.ProductCode AS product_id,
+				'3' as Periode,
+				round(plc.Premi,0) as PremiumAmount,
+				cst.Remark_1,
+				cst.Remark_2,
+				cst.Remark_3,
+				cst.Remark_4,
+				cst.Remark_5								
+				FROM t_gn_customer AS cst
+				inner join t_gn_insured ins on ins.customerid=cst.customerid
+				inner join t_gn_policy plc on plc.PolicyId = ins.PolicyId
+				inner join t_gn_policyautogen pa on pa.PolicyNumber=plc.PolicyNumber
+				inner join t_gn_payer py on py.CustomerId=cst.CustomerId
+				inner JOIN t_gn_product AS prd ON prd.ProductId = pa.ProductId
+				inner JOIN tms_agent AS agt ON agt.UserId = cst.SellerId
+				
+				
+				left join t_lk_salutation s on s.SalutationId=ins.SalutationId
+				left join t_lk_gender g on g.GenderId=ins.GenderId
+				left join t_lk_premiumgroup pg on pg.PremiumGroupId=ins.PremiumGroupId
+				WHERE 1 = 1
+		";
+		/* inner JOIN tms_agent AS tsm ON tsm.UserId=430
+			inner JOIN tms_agent AS spv ON agt.spv_id = spv.UserId
+		-- inner JOIN tms_agent AS am ON spv.mgr_id = am.UserId
+		*/
+		$insured_tail =	"ORDER BY pa.PolicyNumber, pg.PremiumGroupOrder ";
+		$policy_cond = $policy_array ? " and pa.PolicyNumber in (". $policy_array .") " : '  ';
+		$insured_query = $insured . $policy_cond . $insured_tail;
+		$insuredRestObj = $connect->query($insured_query);
+		
+		$no = 1;
+		$pol_id='';
+		$holder_id=0;
+		$baris = 6;
+		foreach ($insuredRestObj ->result_object() as $key => $row) {
+			if ($row ->policy_id != $pol_id) {
+				$pol_id=$row ->policy_id;
+				$holder_id=0;
+			}
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('A'.$baris, $no,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$baris, $row ->FormNumber,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('C'.$baris, $row->InsuredName,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('D'.$baris, $row->InsuredDOB,PHPExcel_Cell_DataType::TYPE_STRING );
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('E'.$baris, $row ->sex,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$baris, $row ->Address1,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('G'.$baris, $row ->Address2,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('H'.$baris, $row ->City,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('I'.$baris, $row ->Refnumber,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('J'.$baris, $row ->ZipCode,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('K'.$baris,$row ->Phone1,PHPExcel_Cell_DataType::TYPE_STRING);			
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('L'.$baris, $row ->Phone2,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('M'.$baris, $row ->EXTPhone2,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('N'.$baris, $row ->MobilePhone,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('O'.$baris, $row ->MaritalStatus,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('P'.$baris, $row ->Children,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('Q'.$baris, $row ->FACode,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('R'.$baris, $row ->Activation_Date,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('S'.$baris, $row ->BranchCode,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('T'.$baris, $row ->CSName,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('U'.$baris, $row ->ACCHolderName,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('V'.$baris, $row ->ACCNumber,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('W'.$baris, $row ->ACCBranch,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('X'.$baris, $row ->Program,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('Y'.$baris, $row ->Email,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('Z'.$baris, $row ->Asken,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AA'.$baris,$row ->Region,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AB'.$baris, $row ->NamaLG,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AC'.$baris, $row ->IDStaffBank,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AD'.$baris, $row ->operid,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AE'.$baris, $row ->sellerid,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AF'.$baris, $row ->spv_id,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AG'.$baris, $row ->am_id,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AH'.$baris, $row ->tsm_id,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AI'.$baris, $row ->product_id,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AJ'.$baris, $row ->EXPDate,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AK'.$baris, $row ->EXPCard,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AL'.$baris, $row ->Periode,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('AM'.$baris, $row ->PremiumAmount,PHPExcel_Cell_DataType::TYPE_STRING);
+			
+			$holder_id++;
+			$baris++;
+			$no++;
+		}
+	$objPHPExcel->getActiveSheet()->setTitle('Policy');
+	
+	// Create a new worksheet, after the default sheet
+	$objPHPExcel->createSheet();
+	
+	// Add some data to the second sheet, resembling some different data types
+	$objPHPExcel->setActiveSheetIndex(1);
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A1', 'INPUT Date :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B1', $start_date);
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C1', 'TO :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D1', $end_date);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A2', 'Product ID');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B2', $prodid);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A3', 'Product Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B3', $productName);
+	
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A5', 'No.');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B5', 'Form Number');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C5', 'Policy Id');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D5', 'Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('E5', 'DOB');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('F5', 'Gender');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('G5', 'Relation');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('H5', 'Percentage');
+	
+	$benf ="
+		SELECT DISTINCT
+				concat(date_format(plc.PolicySalesDate,'%d/%m/%y'), '-', pa.PolicyNumber)
+			 	AS FormNumber,
+				plc.PolicyId AS PolicyId,
+				concat(bnf.BeneficiaryFirstName, bnf.BeneficiaryLastName) as Name,
+				bnf.BeneficiaryDOB as DOB,
+				ins.GenderId as Gender,
+				r.BeneficiaryAliasCode as Relation,
+				bnf.BeneficieryPercentage as Percentage
+	
+				FROM t_gn_customer AS cst
+				inner JOIN t_gn_insured AS ins ON ins.CustomerId = cst.CustomerId
+				inner join t_gn_beneficiary bnf on bnf.CustomerId=cst.CustomerId
+				inner join t_gn_policyautogen pa on pa.CustomerId = cst.CustomerId
+				inner join t_gn_policy plc on plc.PolicyId = ins.PolicyId
+				left join t_lk_gender g on g.GenderId=ins.GenderId
+				left join t_lk_relationshiptype r on r.RelationshipTypeId=bnf.RelationshipTypeId
+				WHERE 1 = 1
+				";
+	
+	
+	$tail_benf= " group by bnf.BeneficiaryId
+				ORDER BY pa.PolicyNumber, bnf.BeneficiaryFirstName ";
+	$benf_query = $benf . $policy_cond . $tail_benf;
+	// echo $benf_query;
+	$benfRestObj = $connect->query($benf_query);
+	
+	$no = 1;
+	$pol_id='';
+	$holder_id=0;
+	$baris=6;
+	foreach ($benfRestObj ->result_object() as $key => $row) {
+		if ($row ->policy_id != $pol_id) {
+			$pol_id=$row ->policy_id;
+			$holder_id=0;
+		}
+		
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('A'.$baris, $no,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$baris, $row->FormNumber,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('C'.$baris, $row->PolicyId,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('D'.$baris, $row->Name,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('E'.$baris, $row->DOB,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('F'.$baris, $row->Gender,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('G'.$baris, $row->Relation,PHPExcel_Cell_DataType::TYPE_STRING);
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('H'.$baris, $row->Percentage,PHPExcel_Cell_DataType::TYPE_STRING);
+		
+		$holder_id++;
+		$baris++;
+		$no++;
+	}	
+	// Rename 2nd sheet
+	$objPHPExcel->getActiveSheet()->setTitle('Beneficiary');
+	
+	
+	$objPHPExcel->createSheet();
+	$objPHPExcel->setActiveSheetIndex(2);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A1', 'INPUT Date :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B1', $start_date);
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C1', 'TO :');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D1', $end_date);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A2', 'Product ID');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B2', $prodid);
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A3', 'Product Name');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B3', $productName);
+	
+	
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('A5', 'No.');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('B5', 'Form Number');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('C5', 'Ref. Number');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('D5', 'Question');
+	$objPHPExcel->getActiveSheet()->setCellValueExplicit('E5', 'Answer');
+	
+	$sqlsurvey = "SELECT CONCAT(DATE_FORMAT(i.`PolicySalesDate`,'%d/%m/%y') , '-', pa.PolicyNumber) AS FormNumber,e.`Pros_Refnumber` AS refNumber, e.`CampaignId`,a.`customer_id`,d.`survey_quest_id`, d.`survey_question`,a.`answer_value` FROM t_gn_multians_survey a
+						INNER JOIN t_gn_customer e ON e.`CustomerId` = a.`customer_id`
+						INNER JOIN `t_gn_campaign` f ON f.`CampaignId` = e.`CampaignId`
+						INNER JOIN t_gn_insured h ON h.`CustomerId` = e.`CustomerId`
+						INNER JOIN t_gn_policyautogen pa ON pa.CustomerId = e.CustomerId
+						INNER JOIN t_gn_policy i ON i.`PolicyId` = h.`PolicyId`
+						INNER JOIN t_gn_prod_survey b ON a.`prod_survey_id` = b.`prod_survey_id`
+						INNER JOIN t_lk_survey c ON c.`survey_id` = b.`survey_id`
+						INNER JOIN t_lk_question_survey d ON d.`survey_quest_id` = c.`survey_quest_id`
+						WHERE 1 = 1 and a.quest_have_ans <> '0' ";
+	
+	if ($Campaign){
+		$sqlsurvey .= " and f.`CampaignNumber` in (".$Campaign.")";
+	}
+	
+	$policysurvey = $connect->query($sqlsurvey);
+	
+	$no = 1;
+	$oldkey ='';
+	$baris =6;
+	foreach ($policysurvey->result_object() as $key => $row){
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('A'.$baris, $no,PHPExcel_Cell_DataType::TYPE_STRING);
+	
+	
+		if($oldkey<>$row->survey_quest_id){
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('B'.$baris, $row->FormNumber,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('C'.$baris, $row->refNumber,PHPExcel_Cell_DataType::TYPE_STRING);
+			$objPHPExcel->getActiveSheet()->setCellValueExplicit('D'.$baris, $row->survey_question,PHPExcel_Cell_DataType::TYPE_STRING);
+		}
+	
+		$objPHPExcel->getActiveSheet()->setCellValueExplicit('E'.$baris, $row->answer_value,PHPExcel_Cell_DataType::TYPE_STRING);
+		$no++;
+		$baris++;
+	}
+	
+	$objPHPExcel->getActiveSheet()->setTitle('Survey');
+	$file_name = $prodid.'_'.date('Y-m-d-his').'.xls';
+	// Redirect output to a client’s web browser (Excel5)
+	header('Content-Type: application/vnd.ms-excel');
+	header('Content-Disposition: attachment;filename='.$file_name);
+	header('Cache-Control: max-age=0');
+	$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+	$objWriter->save('php://output');
+?>

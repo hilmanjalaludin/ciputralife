@@ -1,0 +1,81 @@
+
+
+.custom-grid {
+	border:0px solid #000;
+	/*background:url('../gambar/content_top.png');*/
+	height:24px;	
+}
+.header_order{text-decoration:none;color:#24385c;border:0px solid #000;cursor:pointer;}
+.header_order:hover{text-decoration:none;color:#FF4321;border:0px solid #000;cursor:pointer;}
+.th-first{
+	font-family:Arial;
+	font-size:11px;
+	color:#000;
+	font-weight:normal;
+	border:0px solid #000;
+	background:url('../gambar/content_top.png');
+	height:27px;
+	border-right:1px solid #eeeeee;	
+	border-bottom:1px solid #eeeeee;
+	color:#24385c;
+}
+.th-middle{
+	font-family:Arial;
+	font-size:11px;
+	color:#000;
+	font-weight:normal;
+	background:url('../gambar/content_top.png');
+	background-position:top; 
+	height:27px;	
+	border-right:1px solid #eeeeee;
+	border-bottom:1px solid #eeeeee;
+	
+	color:#24385c;
+}
+
+.th-lasted{
+	font-family:Arial;
+	font-size:11px;
+	color:#000;
+	font-weight:normal;
+	border-bottom:1px solid #eeeeee;
+	background:url('../gambar/content_top.png');
+	background-position:100% 0%; 
+	height:27px;	
+	
+	color:#24385c;
+}
+
+.content-first{
+	text-align:center;
+	font-family:Arial;
+	font-size:11px;
+	font-weight:normal;
+	border-right:1px solid #eeeeee;
+	height:24px;	
+	border-bottom:1px solid #eeeeee;
+	border-left:1px solid #eeeeee;
+}
+
+.content-lasted{
+	font-family:Arial;
+	font-size:11px;
+	font-weight:normal;
+	border-right:1px solid #eee;
+	height:24px;
+	padding-left:4px;	
+	border-bottom:1px solid #eeeeee;
+}
+
+.content-middle{
+	font-family:Arial;
+	font-size:11px;
+	font-weight:normal;
+	border-right:1px solid #eee;
+	height:24px;	
+	padding-left:4px;
+	border-bottom:1px solid #eeeeee;
+}
+
+.onselect:hover{background-color:#fffccc;color:#703c04;}
+

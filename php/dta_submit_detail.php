@@ -1,0 +1,636 @@
+<?php
+ require("../sisipan/sessions.php");
+ require("../fungsi/global.php");
+ require("../class/MYSQLConnect.php");
+ require("../class/class.application.php");
+ require('../sisipan/parameters.php');
+ require('../class/lib.form.php');
+ 
+ 
+ /** get form edit alyout ***/
+ 
+ function getFormLayout()
+	{
+		global $db;
+		$sql = " SELECT a.FormLayout , a.FormEditLayout
+				 FROM t_gn_formlayout a 
+				 LEFT JOIN t_gn_campaignproduct b on a.ProductId=b.ProductId
+				 WHERE a.FormConds=1 
+				 AND b.CampaignId='".$db -> escPost('CampaignId')."' ";
+		//echo $sql;
+		
+		$qry = $db->execute($sql,__FILE__,__LINE__);	
+		if( $qry && ($rows = @mysql_fetch_assoc($qry)))
+		{	
+			return $rows['FormEditLayout'];
+		}
+	}
+	
+	function getDataType() 
+	{
+		global $db;
+		$datas = array();
+		$sql = 
+		    "
+		        SELECT 
+					tgf.Futype, 
+					tgf.FuName, 
+					tgf.FuId,
+					tgc.CustomerId
+				FROM t_gn_followup tgf
+				INNER JOIN t_gn_customer tgc ON .tgc.CustomerId = tgf.FuCustId
+				WHERE tgc.CustomerId = '".$db -> escPost ('CustomerId')."';
+			";
+		$qry = $db -> query($sql);
+		
+		foreach( $qry -> result_assoc () as $rows )
+		{
+			$datas['type'] = $rows['Futype'];
+			$datas['id']   = $rows['FuId'];
+			$datas['CustId'] = $rows['CustomerId'];
+		}
+		
+		return $datas;
+	}
+	
+ /** get Call result Code bypass from Custid **/
+ 
+	function getCallResultCode(){
+		global $db;
+		
+		$sql = "SELECT  d.CallReasonCode
+				FROM t_gn_customer a INNER JOIN t_gn_assignment b on a.CustomerId=b.CustomerId 
+					LEFT JOIN t_gn_campaign c on a.CampaignId=c.CampaignId 
+					LEFT join t_lk_callreason d on a.CallReasonId =d.CallReasonId
+					left join tms_agent e on a.SellerId=e.UserId
+				WHERE a.CustomerId='".$db->escPost('CustomerId')."'";
+				
+				
+		$codec = $db -> fetchval($sql,__FILE__,__LINE__);
+		if( $codec ) : return $codec;
+		else : return null;
+		endif;
+	}
+	
+/** get CampaignId By CustomerId **/
+	function CampaignIdByCustomerId()
+	{
+		global $db;
+		$sql = " SELECT a.CampaignId from t_gn_customer a WHERE a.CustomerId ='".$db->escPost('CustomerId')."'";
+		$qry = $db -> query($sql);
+		if( !$qry -> EOF() )
+		{
+			return $qry -> result_singgle_value();
+		}
+	}
+	
+
+	/** in prosess by QC **/
+		
+		function QaInProsess(){
+			global $db;
+				$sql = " Update t_gn_customer a SET a.QaProsess=1, a.QaProsessId = '".$db->getSession('UserId')."' WHERE a.CustomerId='".$db->escPost('CustomerId')."'";
+				// $qry = $db->execute($sql,__FILE__,__LINE__);
+				$db -> execute($sql,__FILE__,__line__);
+				// if( $qry )
+				// {	
+					// echo $sql;
+				// }
+				$db -> set_mysql_insert('t_gn_qaprosesslog',array('LogProsessCustomer'=>$db->escPost('CustomerId'),'LogProsessQaId'=>$db->getSession('UserId')));
+		}
+	/* function get QC Status **/
+		
+		function getStatusInQA(){
+			global $db;
+			
+			$datas = array();
+			$sql = "select a.CallReasonId, a.CallReasonCode, a.CallReasonDesc
+					from t_lk_callreason a 
+					left join t_lk_callreasoncategory b on a.CallReasonCategoryId=b.CallReasonCategoryId
+					where a.CallReasonContactedFlag=3
+					and b.CallReasonCategoryCode='QA'
+					ORDER BY a.CallReasonLevel ASC";
+
+			
+			$qry = $db -> execute($sql,__FILE__,__line__);	
+			while( $row = $db ->fetchrow($qry)){
+				$datas[] = $row;
+			}
+			return $datas;
+		}
+		
+	 QaInProsess();	
+	 
+	 
+	 	
+	function getDataCollMon()
+	{
+		global $db;
+			$sql = " select 
+							((a.SubCategoryId)-1) as s_form, 
+							concat('A_INIT',a.SubCategoryId,'h') as s_object,
+							concat('sliderValue',a.SubCategoryId,'h') as s_name,
+							a.SubCategoryDesc as n_label, 
+							a.StartNumber as n_minValue, 
+							a.EndNumber as n_maxValue,
+							'0' as n_value,
+							a.StepNumber as n_step
+							from coll_subcategory_collmon a
+							where a.SubCategoryFlags=1 ";
+			$qry = $db -> query($sql);		 
+			foreach( $qry -> result_assoc() as $rows )
+			{
+				$datas[][$rows['s_object']] = array
+				(
+					's_form'  => $rows['s_form'],
+					's_name'  => $rows['s_name'],
+					'n_minValue' => $rows[n_minValue],
+					'n_maxValue' => $rows[n_maxValue],
+					'n_value' => $rows[n_value],
+					'n_step' => $rows[n_step],
+					'n_label' => $rows['n_label']
+				); 
+			}
+			return $datas;
+	}
+
+	function getData()
+	{
+		global $db;
+		$data = array();
+		$sql = "select a.FuCustId , b.CustomerId, a.Futype from t_gn_followup a inner join t_gn_customer b on a.FuCustId = b.CustomerId where b.CustomerId = '".$db->escPost('CustomerId')."'";
+
+		$qry = $db -> query($sql);
+
+		foreach($qry -> result_assoc() as $rows) {
+		    $data['type'] = $rows['Futype'];
+		}
+		    echo json_encode( $data );
+	}
+		
+?>
+<html>
+<script>
+	var F_FA        		= 1;
+	var F_TNA       		= 2;
+	var F_MTF       		= 3;
+	var FuId      			= '<?php echo $db ->escPost('FuId'); ?>';
+	var FuType      		= '<?php echo $db ->escPost('FuType'); ?>';
+	var CustomerId        	= '<?php echo $db ->escPost('CustomerId'); ?>';
+	var CampaignId        	= '<?php echo $db->escPost('CampaignId'); ?>';
+	var V_DATAS_CUSTOMER 	= '<?php echo $db->escPost('CustomerId'); ?>';
+	var V_DATAS_CAMPAIGN 	= '<?php echo CampaignIdByCustomerId(); ?>';
+	var V_DATAS_CODECT	 	= '<?php echo getCallResultCode(); ?>';	
+	var V_FORM_POLICY	 	= '<?php echo getFormLayout();?>';
+	var V_DATAS_INITCLAS 	= '../class/class.qccontact.detail.php';
+	
+	var CallBackCount = '<?php echo $callbacklimiter['CallAgainAttempt']; ?>';
+	var LastCallBack  = '<?php echo $callbacklimiter['LastCallAgainDate']; ?>';
+	var CallReasonQue = '<?php echo $callbacklimiter['CallReasonQue']; ?>';
+	
+	var phoneCall    = {
+						initPhone  : false,
+						initType   : '', 
+						initNumber : '',
+						InitLater  : false,
+						initCreate : false,
+						initCall   : false,
+						initStatus : 0,
+						initChoose : false,
+						CustomerId : V_DATAS_CUSTOMER,
+						initSave   : false,
+						NextDatas  : false,
+						initReferal: false,
+						callIsRun  : false
+					 }
+					 
+	var winFrame = window.iframe_policy_qc;
+	
+	$('#toolbars').extToolbars({
+		extUrl   :'../gambar/icon',
+		extTitle :[['Create Score']],
+		extTitle :[['Create Score'],['Follow FA']],
+		extMenu  :[['newScore'],['FA']],
+		extIcon  :[['application_edit.png'],['group.png']],
+		// extIcon  :[],
+		extText  :true,
+		extInput :true,
+		extOption:[]
+	});
+	
+	//function call customer
+	var setCallNumber = function(phoneNumber){
+		if( phoneNumber!=''){
+			phoneCall.initPhone = true;
+			phoneCall.initNumber = phoneNumber;
+		}
+		else{
+			phoneCall.initPhone = false;
+			phoneCall.initNumber = '';
+		}
+	}
+	
+	
+	var hangupCustomer = function(){	
+		phoneCall.callIsRun = false;
+		if( phoneCall.initCall ){
+			phoneCall.initCall = false;
+			document.ctiapplet.callHangup();
+			alert("Hanging up");
+		}
+		else{
+			alert("No call activity!");
+		}
+	}
+	
+	
+	var callToNumber = function (PhoneNumber)
+	{ 
+		console.log(phoneCall.initSave);
+		if( phoneCall.callIsRun == false){
+			if(phoneCall.initSave==false )
+		{
+			if( document.ctiapplet.getAgentStatus()==AGENT_READY){
+				console.log('call to '+ PhoneNumber +'is run . phoneCall.initSave=true');
+				document.ctiapplet.callDialCustomer('', PhoneNumber,phoneCall.CustomerId,phoneCall.CustomerId);	
+				phoneCall.initCall = true;
+				phoneCall.initSave = true;
+				phoneCall.callIsRun = true;
+			}
+			else{
+				alert('Please set Ready first!'); return;
+			}
+		}
+		else{
+			alert('Please Save Status!');
+		}	
+	  }
+	  else{
+		alert('Call is run.');
+	  }
+		
+	}
+    
+	//default call customer
+	//author : bos aink
+	var dialCustomer=function(){
+		// alert("agus ganteng");
+		//alert(phoneCall.initNumber);exit;
+		if(CallBackCount<11){	
+			if(phoneCall.initPhone){
+				phoneCall.initChoose = true;
+				phoneCall.initReferal = true;
+				callToNumber(phoneCall.initNumber);
+			}
+			else{
+				alert('Please select Phone number to dial!'); return false;
+			}
+	    }
+		else{
+			alert("Data sudah lebih dari "+CallBackCount+" kali di CallBack..!"); return false;
+		}
+	}
+	
+	var getCallBackCount = function(){
+		doJava.File = V_DATAS_INITCLAS;
+		doJava.Params ={
+			action:'get_callbackcount',
+			customerid:V_DATAS_CUSTOMER
+		}
+		var count = doJava.Post();
+		if( count>0){
+			CallBackCount = count;
+		}else{
+			CallBackCount = 1;
+		}
+	}
+	
+	//end function call
+
+	var FA = function(){
+		var xScreen = (Ext.DOM.window.screen.availWidth-200);
+		var yScreen = (Ext.DOM.window.screen.availHeight);
+		    doJava.Params ={
+				CampaignId 	: V_DATAS_CAMPAIGN,
+				CustomerId 	: V_DATAS_CUSTOMER,
+				FuType      : F_FA,
+				FuId  		: FuId
+			}
+			doJava.winew.winconfig= { 
+				location	: '../php/frm.followup.fa.php?'+doJava.ArrVal(),
+				width		: xScreen,
+				height		: yScreen, 
+				windowName	: 'NewScoringWindow',
+				resizable	: true, menubar : false, 
+				scrollbars	: true,  status : false, 
+				toolbar		: false
+			}
+		try {
+			if( !doJava.winew.winHwnd.closed) doJava.winew.winClose();
+			doJava.winew.open();
+		
+		}
+		catch(e){
+			console.log(e)
+		}
+	}
+	var EditCustomer = function(){
+		var CustomerId= V_DATAS_CUSTOMER;
+		if( CustomerId!=''){
+			var windowX = window.open('frm.edit.custname.php?CustomerId='+CustomerId,"myWindowPdf","height=210,width=800,menubar=no,status=no");
+			windowX.close();
+			windowX=window.open('frm.edit.custname.php?CustomerId='+CustomerId,"myWindowPdf","height=210,width=800,menubar=no,status=no");
+		}
+	}
+	
+	var ShowScore = function(){
+		location	= '../coll_mon/collmon.QA.php?action=showWins&CustomerId='+V_DATAS_CUSTOMER;
+		alert(location);
+	}
+	
+	var newScore = function(){
+		var xScreen = (Ext.DOM.window.screen.availWidth-200);
+		var yScreen = (Ext.DOM.window.screen.availHeight);
+			doJava.winew.winconfig= {
+				location	: '../coll_mon/collmon.QA.php?action=showWins&CustomerId='+V_DATAS_CUSTOMER,
+				width		: xScreen,
+				height		: yScreen, 
+				windowName	: 'NewScoringWindow',
+				resizable	: true, menubar : false, 
+				scrollbars	: true,  status : false, 
+				toolbar		: false
+			}
+		try {
+			if( !doJava.winew.winHwnd.closed) doJava.winew.winClose();
+			doJava.winew.open();
+		}
+		catch(e){
+			console.log(e)
+		}
+	}
+	
+	var getContactHistory = function(){
+		$(function(){
+			doJava.Params = { 
+				action:'history_contact',
+				customerid:V_DATAS_CUSTOMER,
+				// FuType:FuType,
+				// FuId:FuId
+			}
+			$('#contact_history').load( V_DATAS_INITCLAS+'?'+doJava.ArrVal() );
+		});
+	}
+
+	var showWindow = function(){
+		var xScreen = ($(window).width()-250);
+		  var yScreen = ($(window).height());
+			
+			doJava.Params = {
+				CustomerId:V_DATAS_CUSTOMER
+			}
+			
+			doJava.winew.winconfig={
+					location	: '../coll_mon/coll.mon.index.php?'+doJava.ArrVal(),
+					width		: xScreen,
+					height		: yScreen,
+					windowName	: 'windowName',
+					resizable	: false, 
+					menubar		: false, 
+					scrollbars	: true, 
+					status		: false, 
+					toolbar		: false
+			};
+			
+			if( !doJava.winew.winHwnd.closed) doJava.winew.winClose();
+				doJava.winew.open();
+		
+		 	
+	}
+
+	
+	var getFileRecording = function(){
+			$(function(){
+				doJava.Params = { 
+					action:'get_recording',
+					customerid:V_DATAS_CUSTOMER
+				}
+				$('#recording_file').load( V_DATAS_INITCLAS+'?'+doJava.ArrVal() );
+			});
+	}
+	
+	var playRecording = function(filename){
+		$(function(){
+				doJava.Params = { 
+					action:'play_recording',
+					rec_id:filename,
+					customerid:V_DATAS_CUSTOMER
+				}
+				$('#recording_play').load( V_DATAS_INITCLAS+'?'+doJava.ArrVal() );
+		});
+	}
+
+ /* clear prosess verified **/
+ 
+	var ClearProses = function(){
+		doJava.File = V_DATAS_INITCLAS;
+		doJava.Params ={
+			action:'reset_prosess',
+			customerid:V_DATAS_CUSTOMER
+		}
+		var error = doJava.Post();
+		if( error==1) { return true; }
+		else { return false; }
+	}
+ /* exit  prosess verified **/		
+ 
+	var exitApprove =function(){
+		if(confirm('Do you want to exit from this session ?')){
+			if( ClearProses() ){
+				class_active.Active();
+				$('#main_content').load('dta_qa_submit_nav.php');
+			}
+		}
+		else
+			return false;
+	}
+	//define call back
+	var getContactReason = function(){
+		$(function(){
+			// alert('asdasdasdd');
+			$('#contact_reason_call').load(V_DATAS_INITCLAS+"?action=PhoneCall&customerid="+V_DATAS_CUSTOMER+"&campaignid="+V_DATAS_CAMPAIGN);
+			// +"&VerifiedStatus="+V_VERIFIED;
+		});
+	}
+	
+	var checkQCstatus = function()
+	{
+		doJava.File = V_DATAS_INITCLAS;
+		doJava.Params = {
+			action 	: 'check_status_fa',
+			customerid : V_DATAS_CUSTOMER
+		}
+		
+		var error = doJava.eJson();
+		
+		if(error.result)
+		{
+			for(var i in error.value)
+			{
+				if(!error.value[i])
+				{
+					alert('QC status '+error.name[i]+', not complete!');
+					return false;
+				}
+			}
+			//alert("Success, Save Verified! ");
+			return true;
+		}
+		else{
+			alert("Failed!");
+			return false;
+		}
+	}
+	
+	var saveApprove = function(){
+		var verified_status = doJava.checkedValue('apprv_status');
+		var notes_qc = doJava.Value('notes_qc');
+		if( verified_status==''){
+			alert('Status Can not empty !');
+			return false;
+		}
+		if( notes_qc==''){
+			alert('Notes Can not empty !');
+			return false;
+		}
+		else if(checkQCstatus()){
+			doJava.File = V_DATAS_INITCLAS;
+			doJava.Params = {
+				action 		: 'save_qc',
+				customerid  : V_DATAS_CUSTOMER,
+				FuId 		: FuId,
+				status 		: verified_status,
+				notes 		: notes_qc
+			}
+			var error = doJava.eJson();
+			if( error.result ==1)
+			{
+				alert("Success, Save Verified! ");
+				//newWindowScore.close();
+				getContactHistory();
+			}
+			else{ 
+				alert("Failed, Save Verified! ");
+			} 
+		}
+	}
+	
+	getFileRecording();
+	getContactHistory();
+	getContactReason();
+</script>
+<style>
+	a{
+		text-decoration:none;
+	}
+</style>
+<body onload="alert('A')">
+<fieldset class="corner" style="margin-top:-0px;border:1px solid #dddddd;">
+	<legend class="icon-customers">&nbsp;&nbsp;Follow FA Detail </legend>
+		<div id="toolbars" class="corner" style="width:'100%';margin-bottom:4px;">
+		<!--<div id="buttone"></div>-->
+           <?php 
+                // $data = $this->getDatas();
+                // var_dump($data);
+           ?>
+		</div>
+
+		<table border=0 width="70%" cellpadding="0px" cellspacing="0px">
+				<tr>
+					<td valign="top">
+						<div class="box-shadow" style="height:180px;">
+							<table>
+								<tr>
+									<td valign="top" id="xx"> 
+										<fieldset style="border:1px solid #dddddd;"> 	
+											<legend>Recording List </legend>
+												<?php
+													//echo $_REQUEST['CustomerId'];
+													//echo CampaignIdByCustomerId();
+												?>
+												<div class="box-shadow" id="recording_file" style="width:400px;overflow:auto;height:130px;border:1px solid #dddddd;"></div>
+										</fieldset>
+									</td>
+									<td valign="top" >
+										<fieldset style="border:1px solid #dddddd;"> 	
+											<legend>Play Recording </legend>
+											<div id="recording_play" style="width:370px;overflow:auto;height:140px;border:0px solid #dddddd;"> </div>
+										</fieldset>	
+									</td>
+								</tr>	
+							</table>
+						</div>
+					</td>
+					<!-- table form -->
+					<td valign="top" rowspan="3">
+						<div class="box-shadow" style="border:1px solid #dddddd;width:250px;height:500px;width:'100%';padding-left:4px;">
+							<table width="70%" style="margin-top:2px;" cellpadding="5px;">
+								<?php if( $db ->getSession( 'handling_type' ) == 10) {?>
+								<tr>
+									<td colspan="2" style="text-align:left;color:red;width:'90%';">
+										<div id="contact_reason_call">
+										</div>
+									</td>
+								</tr>
+								<?php } ?>
+								
+									<?php
+									foreach( $db -> Entity -> ReasonLabelQualityFa() as $KeyCodes => $KeyNames ) { ?>
+										<tr>
+											<th colspan="2" style="text-align:left;color:red;"> 
+												<input type="radio" name="apprv_status" id="apprv_status" value="<?php echo $KeyCodes; ?>"> <?php echo $KeyNames;?>
+											</th>
+										</tr>
+								<?php } ?>
+								<tr>
+									<td colspan="2">
+										<textarea id="notes_qc" style="width:230px;font-family:Consolas;font-size:11px;height:240px;border:1px solid #dddddd;background-color:#FFFCCC;"></textarea>
+									</td>
+								</tr>
+								
+								<tr style="display:none;">
+									<td>Score</td>
+									<td><input type="text" name="nilai_data" id="nilai_data" 
+											style="font-family:Arial;font-size:12px; border:1px solid #FF4321;text-align:center;width:30px;background-color:#FFFCCC;" readonly="true"></td>
+								</tr>
+								<tr>
+									<td>&nbsp;</td>
+									<td> 
+										<!--<a href="javascript:void(0);" class="sbutton" onclick="OpenWindowScoring(window.V_DATAS_CUSTOMER);" style="margin-right:3px;"><span>&nbsp;Scoring</span></a>-->
+										<a href="javascript:void(0);" class="sbutton" onclick="saveApprove();" style="margin-right:2px;"><span>&nbsp;Save</span></a>
+											<!--<a href="javascript:void(0);" class="sbutton" onclick="EditName();" style="margin-left:2px;"><span>&nbsp;E.Name</span></a>-->
+										<a href="javascript:void(0);" class="sbutton" onclick="exitApprove();" style="margin-left:2px;"><span>&nbsp;Exit</span></a>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</td>
+					<!-- end table -->
+				</tr>
+				<!--<tr>
+				<!-- frm.edit.qcpolicy.php 
+				
+					<td>
+						<div class="box-shadow" style="padding:1px;">
+							<iframe name="iframe_policy_qc" id="iframe_policy_qc" src="frm.edit.qcpolicy.php?action=qcapprove&customerid=<?php //echo $_REQUEST['CustomerId'];?>&campaignid=<?php //echo CampaignIdByCustomerId();?>" width="835px" height="225px" scrolling="YES" style="text-align:center;border:1px solid #dddddd;"></iframe>
+						</div>	
+					</td>
+				</tr>-->
+				<tr>
+					<td>
+						<div class="box-shadow" style="padding:1px;height:300px;" id="contact_history"></div>	
+					</td>
+				</tr>
+			</table>
+</fieldset>
+</body>
+</html>

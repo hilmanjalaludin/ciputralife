@@ -1,0 +1,1338 @@
+<!-- SOF --> 
+
+<?php
+define('sale','15,16'); //sale
+
+class cmp_info_object extends index
+{
+	var $_con; // not definition
+	var $_mod; // mode report 
+	var $_grp; // group mode
+	var $_cbl; // calback status
+	var $_ctc; // contact status
+	var $_not; //
+	
+/**
+ ** report available only summary report group by HTML Telesales & HTML supervisor
+ ** for available other report please open remark and then crate content 
+ ** under spesific function to generate
+ **/
+
+ 
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+ 
+ function cmp_info_object()
+ {
+	$this -> _con  = null;
+	$this -> _mod  = $this -> escPost('mode');
+	$this -> _grp  = $this -> escPost('group_by');
+	$this -> _cbl  = $this -> _with_code(self::_calback_status());
+	$this -> _ctc  = $this -> _with_code(self::_contact_status());
+	$this -> _not  = $this -> _with_code(self::_not_int_status());
+	
+ }
+ 
+ /** %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% **********/
+ function _sizeByCallreason($CampaignId=0, $_within)
+ {
+	$_conds = 0;
+	
+	$sql = " SELECT COUNT(DISTINCT a.CustomerId) AS cnt 
+			 FROM t_gn_callhistory a
+			 LEFT JOIN t_gn_customer b ON a.CustomerId=b.CustomerId
+			 LEFT JOIN t_lk_callreason c ON a.CallReasonId = c.CallReasonId
+			 WHERE b.CampaignId='26' 
+			 AND DATE(a.CallHistoryCallDate)>='$start_date' 
+			 AND DATE(a.CallHistoryCallDate)<='$end_date' 
+			 AND DATE(a.CallHistoryCreatedTs)>='$start_date' 
+			AND DATE(a.CallHistoryCreatedTs)<='$end_date'
+			AND c.CallReasonId IN($_within) ";
+			
+    $qry = $this -> query($sql);			
+	if( is_object($qry)){
+		$_conds = $qry  -> result_singgle_value();
+	}
+	
+	return $_conds;
+}		
+
+ /** %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% **********/
+ 
+ function _Weekly_List()
+ {
+	$_Weekly_List = array();
+	$start_date = $this -> getStartDate();
+	$end_date = $this -> getEndDate();
+	
+	if( $start_date )
+	{
+		$sql = " SELECT week(a.CallHistoryCreatedTs) as Weekly 
+					FROM  t_gn_callhistory a 
+					WHERE  a.CallHistoryCreatedTs  
+					BETWEEN date('$start_date') 
+					AND date('$end_date') 
+					group by Weekly ";
+		$qry = $this -> query($sql);
+		foreach( $qry -> result_assoc() as $rows )
+		{
+			$_Weekly_List[$rows['Weekly']] = $rows['Weekly'];
+			$key++;
+		}	
+	}
+	
+	return $_Weekly_List;
+ }
+ 
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+
+private function __week_days($date='')
+{
+	$sql = "select WEEKDAY('$date') as jumlah";
+	$qry = $this -> query($sql);
+	$wek = $qry -> result_get_value('jumlah');
+	return ($wek==6?true:false);
+	
+} 
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+
+ private function _with_code( $_code=array() )
+ {
+	return implode(",",$_code );
+ }
+ 
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+ 
+ function _not_int_status()
+ {
+	$_clbk  = array();
+	$sql = " SELECT a.CallReasonId FROM t_lk_callreason a where a.CallReasonCategoryId=5 
+			 AND a.CallReasonStatusFlag=1 ";
+			 
+	$qry = $this -> query($sql);
+	foreach( $qry -> result_assoc() as $rows ){
+		$_clbk[$rows['CallReasonId']] = $rows['CallReasonId'];
+	}	
+	return $_clbk;
+}
+  
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+ 
+ function _calback_status()
+ {
+	$_clbk  = array();
+	$sql = " select a.CallReasonId from t_lk_callreason a where a.CallReasonLater=1
+			and a.CallReasonStatusFlag=1 ";
+	$qry = $this -> query($sql);
+	foreach( $qry -> result_assoc() as $rows ){
+		$_clbk[$rows['CallReasonId']] = $rows['CallReasonId'];
+	}	
+	return $_clbk;
+}
+ 
+/**
+ ** @ aksesor of class 
+ ** @ handle return <void>
+ */
+ 
+ function _contact_status()
+ {
+	$_ctc  = array();
+	$sql = " select a.CallReasonId from t_lk_callreason a where a.CallReasonContactedFlag=1
+			 and a.CallReasonStatusFlag=1 ";
+	$qry = $this -> query($sql);
+	foreach( $qry -> result_assoc() as $rows  ){
+		$_ctc[$rows['CallReasonId']] = $rows['CallReasonId'];
+	}	
+	return $_ctc;
+ }
+ 
+ /**
+ ** get group select on navigation report
+ ** return < obejct:Class >
+ */
+ 
+ function _Duration( $seconds=0 )
+	{
+		$sec = 0;
+		$min = 0;
+		$hour= 0;
+		$sec = $seconds%60;
+		$seconds = floor($seconds/60);
+		
+		if ($seconds){
+			$min  = $seconds%60;
+			$hour = floor($seconds/60);
+		}
+		
+		if($seconds == 0 && $sec == 0)
+			return sprintf("");
+		else
+			return sprintf("%01d.%02d", $hour, $min);
+	}
+	
+/**
+ ** get group select on navigation report
+ ** return < obejct:Class >
+ */
+ 
+ private function getGroupSelect(){
+		$Spvid = $this -> escPost('group_select');
+		if($Spvid!=''){
+			return $this -> Users -> getUsers($Spvid);
+		}
+	}
+
+ private function getCampaignName(){
+		$CmpId = $this -> escPost('campaign_name');
+		if($CmpId!=''){
+			return $this -> Users -> getUsers($CmpId);
+		}
+	}	
+	
+/**
+ ** get second group select on navigation report
+ ** return < array >
+ */
+ 
+ 
+ private function getTelesales()
+	{
+		$Telesales = explode(',',$_REQUEST['Telesales']);
+		if( is_array($Telesales) ) return $Telesales;
+	}
+	
+/**
+ ** get start date interval 
+ ** return < string >
+ */
+ 	
+ private function getStartDate(){
+		return $start_date = $this -> formatDateEng($this -> escPost('start_date')); 
+	}
+	
+/**
+ ** get end date interval 
+ ** return < string >
+ */
+ 
+ private function getEndDate(){
+		return $end_date   = $this -> formatDateEng($this -> escPost('end_date'));
+	}
+	
+/** 
+ ** main content HTML group report 
+ ** return < void >
+ **/
+	
+ public function show_content_html()
+	{
+		
+		mysql::__construct();
+		
+		switch( $this -> _grp )
+		{
+			//case 'Telesales'  : $this -> PerfomanceByTelesales(); break; 
+			//case 'supervisor' : $this -> PerfomanceBySupervisor(); break; 
+			case 'campaign'   : $this -> ReviewByCampaign(); break; 
+			default:
+				echo "<h3>Sorry, You must filtering by Campaign!</h3>";
+			break;
+		}
+	}
+
+/** 
+ ** main content HTML PerfomanceBySupervisor 
+ ** return < void >
+ **/
+
+ 
+private function ReviewByCampaign()
+{
+	switch( $this -> _mod )
+		{
+			case 'weekly'  : $this -> _weeklyReviewByCampaign(); break; 
+			case 'daily'   : $this -> _dailyReviewByCampaign(); break; 
+			case 'summary' : $this -> _summaryReviewByCampaign(); break; 
+			
+			default: 
+				echo "<h3>Sorry, You must filtering by Campaign!</h3>";
+			break;
+		}
+
+}
+	
+/** 
+ ** main content HTML PerfomanceBySupervisor 
+ ** return < void >
+ **/
+	
+ private function PerfomanceBySupervisor()
+	{
+		
+		switch( $this -> _mod )
+		{
+			//case 'hourly'  : $this -> hourlyPerfomanceByTelesales(); break; 
+			//case 'daily'   : $this -> dailyPerfomanceBySupervisor(); break; 
+			//case 'summary' : $this -> summaryPerfomanceBySupervisor(); break; 
+			
+			default:
+				echo "<h3>Sorry, You must filtering by Campaign!</h3>";
+			break;
+		}
+	}	
+
+/** 
+ ** main content HTML PerfomanceByTelesales 
+ ** return < void >
+ **/
+ 
+ private function PerfomanceByTelesales()
+	{
+		switch( $this -> _mod )
+		{
+			//case 'hourly'  : $this -> hourlyPerfomanceByTelesales(); break; 
+			//case 'daily'   : $this -> dailyPerfomanceBySupervisor(); break; 
+			//case 'summary' : $this -> summaryPerfomanceByTelesales(); break; 
+			
+			default:
+				echo "<h3>Sorry, You must filtering by Campaign!</h3>";
+			break;
+		}
+	}	
+
+	
+/** factory Model 
+ ** get all campaign by send POST
+ ** paramter
+ **/
+ 
+function _query_campaign($_CampaignId)
+{
+	$sql = " SELECT a.CampaignNumber, a.CampaignName FROM t_gn_campaign a WHERE a.CampaignId ='$_CampaignId'";
+	$qry = $this -> query($sql);
+	if( !$qry -> EOF() )
+	{
+		return $qry; 
+	}
+}	
+	
+/**
+ ** get start date interval 
+ ** return < string >
+ */
+
+private function _CampaignName()
+{
+	$_cmp = explode(',',$_REQUEST['CampaignName']);
+	return $_cmp;
+} 
+
+/**
+ ** _summaryReviewByCampaign get data from t_gn_customer
+ ** with interval ( customerupdates ) with status
+ ** break every Weekly 
+**/	
+
+function  _summaryReviewByCampaign()
+{
+	$start_date = $this -> getStartDate();
+	$end_date = $this -> getEndDate();
+	/**
+     ** content header data 
+     ** return data <size >
+	 **/	
+		echo "<table class=\"grid\" cellpadding=\"0\" cellspacing=\"0\" width=\"90%\">
+				<tr>
+					<td rowspan='2' nowrap class=\"header first\" align=\"center\">Campaign Name</td>
+					<td colspan='20' nowrap class=\"header middle\" align=\"center\">Contact Performance</td>
+					<td colspan='8' nowrap class=\"header middle\" align=\"center\">Sales & Metrics</td>
+					<td colspan='6' nowrap class=\"header middle\" align=\"center\">Agents & Hours</td>
+				</tr>
+				<tr>
+					<td nowrap class=\"header middle\" align=\"center\">Database</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt Ratio</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Complete</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Atempt per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes Penetration %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks Left %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contacts per Complete %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Not Interest</td>
+					<td nowrap class=\"header middle\" align=\"center\">Miss Customers</td>
+					<td nowrap class=\"header middle\" align=\"center\">NPU</td>
+					<td nowrap class=\"header middle\" align=\"center\">PIF</td>
+					<td nowrap class=\"header middle\" align=\"center\">AARP</td>
+					<td nowrap class=\"header middle\" align=\"center\">ANP</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Premium</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales Close Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Response Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Log In Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Agents</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Worked Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Talk Time %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Wait Time %</td>
+					<td nowrap class=\"header lasted\" align=\"center\">Wrap Time %</td>
+				</tr>";
+				
+	/**
+     ** get atempt call data **
+     ** return data <size >
+	 **/
+	 
+		$DataSize = array();
+		$size_atempt = array();
+		$Complete = array();
+		$NoPickUp = array();
+		$CallBack = array();
+		$Misscustomers = array();
+		$Agents = array();
+		$totSolicited = array();
+		$NotInterest = array(); 
+		
+	
+	/** 
+	 ** get summarry allocation database on campaign
+	 ** with spesifid campaign  
+     **/	 
+	 
+		$sql = " SELECT 
+				 COUNT(a.CustomerId) AS tots, a.CampaignId AS idx, 
+				 SUM(IF(a.CallReasonId IS NOT NULL,1,0)) AS Utilize,
+				 SUM(IF(a.CallReasonId IN(10),1,0)) AS Misscustomers,
+				 SUM(IF(a.CallReasonId IN(1,3,4,7,9,47,48),1,0)) AS NoPickUp,
+				 SUM(IF(a.CallReasonId IN(11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,29,30,31,32,33,34),1,0)) AS Contact,
+				 SUM(IF(a.CallReasonId IN(10,12,42,49,50),1,0)) AS CallBack,
+				 SUM(IF(a.CallReasonId IN(17,18,19,20,21,22,23,43,24),1,0)) AS NotInterest,
+				 SUM(IF(a.CallReasonId IN(15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,62,63,64,65,66,67,68,69,70,71,72,73,74,75),1,0)) as Complete
+			    FROM t_gn_customer a  
+				GROUP BY idx";
+		//echo "test";
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$DataSize[$rows['idx']]= $rows['tots'];
+			$totSolicited[$rows['idx']] += $rows['Utilize'];
+			$NoPickUp[$rows['idx']]= $rows['NoPickUp']; 
+			$SizeContact[$rows['idx']]= $rows['Contact']; 
+			$CallBack[$rows['idx']]= $rows['CallBack']; 
+			$Misscustomers[$rows['idx']]= $rows['Misscustomers'];  
+			$Complete[$rows['idx']]= $rows['Complete']; 
+			$NotInterest[$rows['idx']]= $rows['NotInterest'];
+		}
+		
+	
+	/** 
+	 ** query , Utilize, 
+	 ** agents,  Atempt,  Abadone 
+	 **/
+	 
+		$sql = "SELECT  
+					COUNT(distinct a.CustomerId) as Utilize ,  
+					COUNT(distinct a.CreatedById) as agents,
+					COUNT(a.CustomerId) as Atempt,
+					b.CampaignId as IDX
+				FROM t_gn_callhistory a
+					LEFT JOIN t_gn_customer b on a.CustomerId=b.CustomerId
+				WHERE DATE(a.CallHistoryCallDate)>='$start_date' AND DATE(a.CallHistoryCallDate)<='$end_date'
+				AND date(a.CallHistoryCreatedTs)>='$start_date' AND date(a.CallHistoryCreatedTs)<='$end_date'
+				GROUP BY IDX ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			
+			$size_atempt[$rows['IDX']] += $rows['Atempt'];
+			$Agents[$rows['IDX']] += $rows['agents'];
+			$NotInterest[$rows['IDX']]+= $rows['NotInterest'];
+		}
+		
+	/**
+     ** get Sales & Metrics **
+     ** return data <size >
+	 **/	 
+	 
+		$size_pif = array();
+		$size_anp = array();
+		$sql = "SELECT 
+					COUNT(DISTINCT a.CustomerId) AS PIF, 
+					SUM(IF(e.PayModeId=2,(b.Premi*12), b.Premi)) AS ANP, 
+					c.CampaignId as IDX
+				FROM t_gn_policyautogen a
+					LEFT JOIN t_gn_policy b ON a.PolicyNumber=b.PolicyNumber
+					LEFT JOIN t_gn_customer c ON a.CustomerId=c.CustomerId
+					LEFT JOIN t_gn_assignment d ON c.CustomerId=d.CustomerId
+					LEFT JOIN t_gn_productplan e ON b.ProductPlanId=e.ProductPlanId
+					LEFT JOIN t_gn_callhistory f ON c.CustomerId = f.CustomerId
+				WHERE 1=1 
+					AND DATE(b.PolicySalesDate)>= '$start_date'
+					AND DATE(b.PolicySalesDate)<= '$end_date'
+					AND c.CallReasonId IN(15,16)
+				GROUP BY IDX ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$size_pif[$rows['IDX']]+= $rows['PIF'];
+			$size_anp[$rows['IDX']]+= $rows['ANP'];
+		}
+	
+
+	
+	/** while true data looping date 
+	 ** by date filter 
+	 */	
+	 
+	 $total_solicited = 0;
+	 $total_atempt = 0;
+	 $total_callback = 0;
+	 $total_complete = 0;
+	 $total_contact = 0;
+	 $total_nopickup = 0;
+	 
+	foreach( $this -> _CampaignName() as $k => $s_d ) 
+	{	
+		$_conts_init_names  = $this -> _query_campaign($s_d);
+		$PercentUtilize 	= ROUND((($totSolicited[$s_d]/$DataSize[$s_d]) * 100),2);
+		$RatioAtempt 		= ROUND(($size_atempt[$s_d]/$totSolicited[$s_d]),2);
+		$AttemptPerComplete	= ROUND(($size_atempt[$s_d] / $Complete[$s_d]),2);
+		$AttemptPerContact	= ROUND(($size_atempt[$s_d] / $SizeContact[$s_d]),2);
+		$AvgPresentation	= ROUND((($Complete[$s_d] / $DataSize[$s_d]) * 100),2);
+		$CallbackLeft		= ROUND((($CallBack[$s_d] / $DataSize[$s_d]) * 100),2);
+		$ContactPerComplete	= ROUND((($SizeContact[$s_d] / $Complete[$s_d]) * 100),2);
+		$AARP				= ($size_anp[$s_d] / $size_pif[$s_d]);
+		$AvgPremi			= ($AARP / 12);
+		$ContactRate		= ROUND((($SizeContact[$s_d] / $totSolicited[$s_d]) * 100),2);
+		$SalesClose			= ROUND((($size_pif[$s_d] / $SizeContact[$s_d]) * 100),2);
+		$ResponseRate		= ROUND((($size_pif[$s_d] / $DataSize[$s_d]) * 100),2);
+		
+		$CampaignName = $_conts_init_names ->result_get_value('CampaignName');
+		
+		echo "<tr>
+				<td nowrap class=\"content first\" align=\"center\">&nbsp;".($CampaignName?$CampaignName:'')."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($DataSize[$s_d]?$DataSize[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($totSolicited[$s_d]?$totSolicited[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($PercentUtilize?$PercentUtilize:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($size_atempt[$s_d]?$size_atempt[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($RatioAtempt?$RatioAtempt:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($AttemptPerComplete?$AttemptPerComplete:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($AttemptPerContact?$AttemptPerContact:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($Complete[$s_d]?$Complete[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($AvgPresentation?$AvgPresentation:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($CallBack[$s_d]?$CallBack[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($CallbackLeft?$CallbackLeft:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($SizeContact[$s_d]?$SizeContact[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($ContactPerComplete?$ContactPerComplete:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($NotInterest[$s_d]?$NotInterest[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($Misscustomers[$s_d]?$Misscustomers[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($NoPickUp[$s_d]?$NoPickUp[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($size_pif[$s_d]?$size_pif[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($AARP?$AARP:0))."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($size_anp[$s_d]?$size_anp[$s_d]:0))."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($AvgPremi)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($ContactRate?$ContactRate:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($SalesClose?$SalesClose:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($ResponseRate?$ResponseRate:0)." %</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">".($Agents[$s_d]?$Agents[$s_d]:0)."</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"content lasted\" align=\"center\">&nbsp;</td>
+			  </tr>";
+
+			/** 
+			 ** calculation footer 
+			 ** for next step 
+			 **/
+					 
+			$total_datasize += $DataSize[$s_d];
+			$total_solicited += $totSolicited[$s_d];
+			$total_atempt += $size_atempt[$s_d];
+			$total_callback += $CallBack[$s_d];
+			$total_complete += $Complete[$s_d];
+			$total_contact += $SizeContact[$s_d];
+			$total_nopickup += $Complete[$s_d];
+			$total_not_interest += $NotInterest[$s_d];
+			$total_miss_cust += $Misscustomers[$s_d];
+			$total_npu += $NoPickUp[$s_d];
+			$total_pif += $size_pif[$s_d];
+			$total_anp += $size_anp[$s_d];
+			$total_agent += $Agents[$s_d];	
+		}
+		
+		/** hitung rata-rata
+		 ** solicted data dbase
+		 **/
+			$avg_call_utilize   	= ROUND((($total_solicited/$DataSize[$s_d])*100),2);
+				$avg_call_atempt    	= ROUND((($total_atempt/$total_solicited)),2);
+				$avg_attempt_complete	= ROUND(($total_atempt / $total_complete),2);
+				$avg_attempt_contact	= ROUND(($total_atempt / $total_contact),2);
+				$avg_complete_penetrate	= ROUND((($total_complete / $DataSize[$s_d]) * 100),2);
+				$avg_callback_left		= ROUND((($total_callback / $DataSize[$s_d]) * 100),2);
+				$avg_contact_complete	= ROUND((($total_contact / $total_complete) * 100),2);
+				$avg_aarp				= ($total_anp / $total_pif);
+				$avg_premium			= ($avg_aarp / 12);
+				$avg_call_contact   	= ROUND((($total_contact/$total_solicited)*100),2);
+				$avg_sales_close		= ROUND((($total_pif / $total_contact) * 100),2);
+				$avg_response			= ROUND((($total_pif / $DataSize[$s_d]) * 100),2);
+				$avg_call_complete  	= ROUND((($total_complete/$total_solicited)*100),2);
+				$avg_call_pickup    	= ROUND((($total_nopickup/$total_solicited)*100),2);
+				$avg_call_callback  	= ROUND((($total_callback/$total_solicited)*100),2);
+				
+		echo "<tr>
+				<td nowrap class=\"total first\" align=\"center\">MTD</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_datasize?$total_datasize:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_solicited?$total_solicited:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_call_utilize?$avg_call_utilize:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_atempt?$total_atempt:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_call_atempt?$avg_call_atempt:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_complete?$avg_attempt_complete:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_contact?$avg_attempt_contact:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_complete?$total_complete:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_complete_penetrate?$avg_complete_penetrate:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_callback?$total_callback:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_callback_left?$avg_callback_left:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_contact?$total_contact:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_contact_complete?$avg_contact_complete:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_not_interest?$total_not_interest:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_miss_cust?$total_miss_cust:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_npu?$total_npu:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_pif?$total_pif:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_aarp?$avg_aarp:0))."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($total_anp?$total_anp:0))."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_premium?$avg_premium:0))."</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_call_contact?$avg_call_contact:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_sales_close?$avg_sales_close:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($avg_response?$avg_response:0)." %</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">".($total_agent?$total_agent:0)."</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+				<td nowrap class=\"total lasted\" align=\"center\">&nbsp;</td>
+				</tr> </table><br>";
+}
+
+
+/**
+ ** _weeklyReviewByCampaign
+ **/ 
+ 
+ function _weeklyReviewByCampaign()
+ {
+	$start_date = $this -> getStartDate();
+	$end_date = $this -> getEndDate();
+	$DataSize = 0;
+	
+	foreach( $this -> _CampaignName() as $key => $CampaignId ) 
+	{
+		$_conts = $this -> _query_campaign($CampaignId);
+		echo "<h4>{$_conts -> result_get_value('CampaignName')}</h4>
+			  <table class=\"grid\" cellpadding=\"0\" cellspacing=\"0\" width=\"90%\">
+				<tr>
+					<td rowspan='2' nowrap class=\"header first\" align=\"center\">Weekly</td>
+					<td colspan='20' nowrap class=\"header middle\" align=\"center\">Contact Performance</td>
+					<td colspan='8' nowrap class=\"header middle\" align=\"center\">Sales & Metrics</td>
+					<td colspan='6' nowrap class=\"header middle\" align=\"center\">Agents & Hours</td>
+				</tr>
+				<tr>
+					<td nowrap class=\"header middle\" align=\"center\">Database</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt Ratio</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Complete</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Atempt per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes Penetration %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks Left %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contacts per Complete %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Not Interest</td>
+					<td nowrap class=\"header middle\" align=\"center\">Miss Customers</td>
+					<td nowrap class=\"header middle\" align=\"center\">NPU</td>
+					<td nowrap class=\"header middle\" align=\"center\">PIF</td>
+					<td nowrap class=\"header middle\" align=\"center\">AARP</td>
+					<td nowrap class=\"header middle\" align=\"center\">ANP</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Premium</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales Close Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Response Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Log In Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Agents</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Worked Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Talk Time %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Wait Time %</td>
+					<td nowrap class=\"header lasted\" align=\"center\">Wrap Time %</td>
+				</tr>";
+					
+	/** 
+	 ** get summarry allocation database on campaign
+	 ** with spesifid campaign  
+     **/	 
+		
+		
+		$sql = " SELECT COUNT(distinct a.CustomerId) as tots 
+				 FROM t_gn_customer a 
+				 left join t_gn_campaign b on a.CampaignId
+				 WHERE a.CampaignId='$CampaignId'";
+		
+		$qry = $this -> query($sql);
+		if( !$qry -> EOF() ){
+			$DataSize = $qry -> result_get_value('tots');	
+		}		
+			
+	/**
+     ** get atempt call data **
+     ** return data <size >
+	 **/	 
+	 
+		$size_atempt = array();
+		$Complete = array();
+		$NoPickUp = array();
+		$CallBack = array();
+		$Misscustomers = array();
+		$Agents = array();
+		$totSolicited = array();
+		
+		
+		$sql = " SELECT count(distinct a.CustomerId) as Utilize , 
+				 DATE(a.CustomerUpdatedTs) as tgl
+				 FROM t_gn_customer a left join t_gn_callhistory b on a.CustomerId=b.CustomerId
+				 WHERE a.CampaignId='$CampaignId'
+				 GROUP BY tgl ";
+
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows ){
+			
+		}
+	
+		$sql = "SELECT 
+				count(distinct a.CustomerId) as Utilize , 
+				COUNT(distinct a.CreatedById) as agents,
+				COUNT(a.CustomerId) as Atempt, 
+				SUM(IF(a.CallReasonId IN(11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,29,30,31,32,33,34),1,0)) AS Contact,
+				SUM(IF(c.CallReasonId IN(1,3,4,7,9,47,48),1,0)) as NoPickUp,
+				SUM(IF(c.CallReasonTerminate=1,1,0)) as Complete,
+				SUM(IF(a.CallReasonId IN(10,12,42,49,50),1,0)) as Callback,
+				SUM(IF(a.CallReasonId IN(10),1,0)) as Misscustomers,
+				WEEK(a.CallHistoryCreatedTs) as tgl
+				FROM t_gn_callhistory a
+				LEFT JOIN t_gn_customer b on a.CustomerId=b.CustomerId
+				LEFT JOIN t_lk_callreason c on a.CallReasonId = c.CallReasonId
+				WHERE b.CampaignId='$CampaignId'
+				AND DATE(a.CallHistoryCallDate)>='$start_date'
+				AND DATE(a.CallHistoryCallDate)<='$end_date'
+				AND date(a.CallHistoryCreatedTs)>='$start_date'
+				AND date(a.CallHistoryCreatedTs)<='$end_date'
+				GROUP BY tgl ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$totSolicited[$rows['tgl']]	 += $rows['Utilize'];
+			$size_atempt[$rows['tgl']]	 += $rows['Atempt'];
+			$SizeContact[$rows['tgl']]	 += $rows['Contact'];
+			$Complete[$rows['tgl']]		 += $rows['Complete'];
+			$NoPickUp[$rows['tgl']]		 += $rows['NoPickUp'];
+			$CallBack[$rows['tgl']]		 += $rows['Callback'];
+			$Misscustomers[$rows['tgl']] += $rows['Misscustomers'];
+			$Agents[$rows['tgl']]		 += $rows['agents'];
+		}
+		
+	/** 
+	 ** get interest policy status 
+	 ** get on customer data 
+	 **/
+		
+		$NotInterest = array(); 
+		$sql = " SELECT COUNT(a.CustomerId) as cnt,
+				 SUM(IF(a.CallReasonId IN(".$this -> _not."),1,0)) as NotInterest,
+				 WEEK(a.CustomerUpdatedTs) as tgl
+				 FROM t_gn_customer a 
+				 WHERE a.CampaignId='$CampaignId'
+				 GROUP BY tgl ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{	
+			$NotInterest[$rows['tgl']]+= $rows['NotInterest'];
+		}
+	
+	
+	/**
+     ** get Sales & Metrics **
+     ** return data <size >
+	 **/	 
+	 
+		$size_pif = array();
+		$size_anp = array();
+		$sql = "SELECT 
+					COUNT(DISTINCT a.CustomerId) AS PIF,
+					SUM(IF(e.PayModeId=2,(b.Premi*12), b.Premi)) AS ANP,
+					DATE(f.CallHistoryCreatedTs) as tgl
+				FROM t_gn_policyautogen a
+					LEFT JOIN t_gn_policy b ON a.PolicyNumber=b.PolicyNumber
+					LEFT JOIN t_gn_customer c ON a.CustomerId=c.CustomerId
+					LEFT JOIN t_gn_assignment d ON c.CustomerId=d.CustomerId
+					LEFT JOIN t_gn_productplan e ON b.ProductPlanId=e.ProductPlanId
+					LEFT JOIN t_gn_callhistory f ON c.CustomerId = f.CustomerId
+				WHERE 1=1
+					AND DATE(b.PolicySalesDate)>= '$start_date'
+					AND DATE(b.PolicySalesDate)<= '$end_date'
+					AND c.CampaignId ='$CampaignId'
+					AND c.CallReasonId IN(15,16)
+				GROUP BY tgl ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$size_pif[$rows['tgl']]+= $rows['PIF'];
+			$size_anp[$rows['tgl']]+= $rows['ANP'];
+		}
+	
+		 
+	/** while true data looping date 
+	 ** by date filter 
+	 */	
+	 
+	 $total_solicited = 0;
+	 $total_atempt = 0;
+	 $total_callback = 0;
+	 $total_complete = 0;
+	 $total_contact = 0;
+	 $total_nopickup = 0;
+	
+	 foreach( self::_Weekly_List() as $k => $s_d ) 
+	 {
+		$PercentUtilize 	= ROUND((($totSolicited[$s_d]/$DataSize) * 100),2);
+		$RatioAtempt 		= ROUND(($size_atempt[$s_d]/$totSolicited[$s_d]),2);
+		$AttemptPerComplete	= ROUND(($size_atempt[$s_d] / $Complete[$s_d]),2);
+		$AttemptPerContact	= ROUND(($size_atempt[$s_d] / $SizeContact[$s_d]),2);
+		$AvgPresentation	= ROUND((($Complete[$s_d] / $DataSize) * 100),2);
+		$CallbackLeft		= ROUND((($CallBack[$s_d] / $DataSize) * 100),2);
+		$ContactPerComplete	= ROUND((($SizeContact[$s_d] / $Complete[$s_d]) * 100),2);
+		$AARP				= ($size_anp[$s_d] / $size_pif[$s_d]);
+		$AvgPremi			= ($AARP / 12);
+		$ContactRate		= ROUND((($SizeContact[$s_d] / $totSolicited[$s_d]) * 100),2);
+		$SalesClose			= ROUND((($size_pif[$s_d] / $SizeContact[$s_d]) * 100),2);
+		$ResponseRate		= ROUND((($size_pif[$s_d] / $DataSize) * 100),2);
+		$color 				= ($this -> __week_days($s_d)?'#dddeee':'');
+			
+			echo "<tr>
+					<td nowrap class=\"content first\" align=\"center\">Week ".($s_d+1)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($DataSize?$DataSize:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($totSolicited[$s_d]?$totSolicited[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($PercentUtilize?$PercentUtilize:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($size_atempt[$s_d]?$size_atempt[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($RatioAtempt?$RatioAtempt:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($AttemptPerComplete?$AttemptPerComplete:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($AttemptPerContact?$AttemptPerContact:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($Complete[$s_d]?$Complete[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($AvgPresentation?$AvgPresentation:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($CallBack[$s_d]?$CallBack[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($CallbackLeft?$CallbackLeft:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($SizeContact[$s_d]?$SizeContact[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($ContactPerComplete?$ContactPerComplete:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($NotInterest[$s_d]?$NotInterest[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($Misscustomers[$s_d]?$Misscustomers[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($NoPickUp[$s_d]?$NoPickUp[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($size_pif[$s_d]?$size_pif[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($AARP?$AARP:0))."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($size_anp[$s_d]?$size_anp[$s_d]:0))."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($AvgPremi)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($ContactRate?$ContactRate:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($SalesClose?$SalesClose:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($ResponseRate?$ResponseRate:0)." %</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">".($Agents[$s_d]?$Agents[$s_d]:0)."</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"content lasted\" align=\"center\">&nbsp;</td>
+				  </tr>";
+
+			/** 
+			 ** calculation footer 
+			 ** for next step 
+			 **/
+					 
+					$total_datasize += $DataSize;
+					$total_solicited += $totSolicited[$s_d];
+					$total_atempt += $size_atempt[$s_d];
+					$total_callback += $CallBack[$s_d];
+					$total_complete += $Complete[$s_d];
+					$total_contact += $SizeContact[$s_d];
+					$total_nopickup += $Complete[$s_d];
+					$total_not_interest += $NotInterest[$s_d];
+					$total_miss_cust += $Misscustomers[$s_d];
+					$total_npu += $NoPickUp[$s_d];
+					$total_pif += $size_pif[$s_d];
+					$total_anp += $size_anp[$s_d];
+					$total_agent += $Agents[$s_d];
+		}
+			/** hitung rata-rata
+			 ** solicted data dbase
+			 **/
+				$avg_call_utilize   	= ROUND((($total_solicited/$DataSize)*100),2);
+				$avg_call_atempt    	= ROUND((($total_atempt/$total_solicited)),2);
+				$avg_attempt_complete	= ROUND(($total_atempt / $total_complete),2);
+				$avg_attempt_contact	= ROUND(($total_atempt / $total_contact),2);
+				$avg_complete_penetrate	= ROUND((($total_complete / $DataSize) * 100),2);
+				$avg_callback_left		= ROUND((($total_callback / $DataSize) * 100),2);
+				$avg_contact_complete	= ROUND((($total_contact / $total_complete) * 100),2);
+				$avg_aarp				= ($total_anp / $total_pif);
+				$avg_premium			= ($avg_aarp / 12);
+				$avg_call_contact   	= ROUND((($total_contact/$total_solicited)*100),2);
+				$avg_sales_close		= ROUND((($total_pif / $total_contact) * 100),2);
+				$avg_response			= ROUND((($total_pif / $DataSize) * 100),2);
+				$avg_call_complete  	= ROUND((($total_complete/$total_solicited)*100),2);
+				$avg_call_pickup    	= ROUND((($total_nopickup/$total_solicited)*100),2);
+				$avg_call_callback  	= ROUND((($total_callback/$total_solicited)*100),2);
+				
+			echo "<tr>
+					<td nowrap class=\"total first\" align=\"center\">MTD</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_datasize?$total_datasize:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_solicited?$total_solicited:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_utilize?$avg_call_utilize:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_atempt?$total_atempt:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_atempt?$avg_call_atempt:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_complete?$avg_attempt_complete:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_contact?$avg_attempt_contact:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_complete?$total_complete:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_complete_penetrate?$avg_complete_penetrate:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_callback?$total_callback:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_callback_left?$avg_callback_left:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_contact?$total_contact:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_contact_complete?$avg_contact_complete:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_not_interest?$total_not_interest:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_miss_cust?$total_miss_cust:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_npu?$total_npu:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_pif?$total_pif:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_aarp?$avg_aarp:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($total_anp?$total_anp:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_premium?$avg_premium:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_contact?$avg_call_contact:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_sales_close?$avg_sales_close:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_response?$avg_response:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_agent?$total_agent:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total lasted\" align=\"center\">&nbsp;</td>
+				</tr> </table><br>";
+		}
+ }
+	
+/**
+ ** summaryPerfomanceByCampaign
+**/	
+
+function _dailyReviewByCampaign()
+{
+	$DataSize = 0;
+	$start_date = $this -> getStartDate();
+	$end_date = $this -> getEndDate();
+	foreach( $this -> _CampaignName() as $key => $CampaignId ) 
+	{
+		$_conts = $this -> _query_campaign($CampaignId);
+		echo "<h4>{$_conts -> result_get_value('CampaignName')}</h4>
+			  <table class=\"grid\" cellpadding=\"0\" cellspacing=\"0\" width=\"90%\">
+				<tr>
+					<td rowspan='2' nowrap class=\"header first\" align=\"center\">Date</td>
+					<td colspan='20' nowrap class=\"header middle\" align=\"center\">Contact Performance</td>
+					<td colspan='8' nowrap class=\"header middle\" align=\"center\">Sales & Metrics</td>
+					<td colspan='6' nowrap class=\"header middle\" align=\"center\">Agents & Hours</td>
+				</tr>
+				<tr>
+					<td nowrap class=\"header middle\" align=\"center\">Database</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited</td>
+					<td nowrap class=\"header middle\" align=\"center\">Solicited Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt Ratio</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Complete</td>
+					<td nowrap class=\"header middle\" align=\"center\">Attempt per Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Atempt per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes Penetration %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Completes per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Callbacks Left %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contacts per Complete %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Not Interest</td>
+					<td nowrap class=\"header middle\" align=\"center\">Miss Customers</td>
+					<td nowrap class=\"header middle\" align=\"center\">NPU</td>
+					<td nowrap class=\"header middle\" align=\"center\">PIF</td>
+					<td nowrap class=\"header middle\" align=\"center\">AARP</td>
+					<td nowrap class=\"header middle\" align=\"center\">ANP</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Premium</td>
+					<td nowrap class=\"header middle\" align=\"center\">Contact Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales Close Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Response Rate %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Sales per Hour</td>
+					<td nowrap class=\"header middle\" align=\"center\">Log In Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Agents</td>
+					<td nowrap class=\"header middle\" align=\"center\">Average Worked Hours</td>
+					<td nowrap class=\"header middle\" align=\"center\">Talk Time %</td>
+					<td nowrap class=\"header middle\" align=\"center\">Wait Time %</td>
+					<td nowrap class=\"header lasted\" align=\"center\">Wrap Time %</td>
+				</tr>";
+					
+	/** 
+	 ** get summarry allocation database on campaign
+	 ** with spesifid campaign  
+     **/	 
+		
+		$DataSize = 0;
+		$sql = " SELECT COUNT(distinct a.CustomerId) as tots 
+				 FROM t_gn_customer a 
+				 left join t_gn_campaign b on a.CampaignId
+				 WHERE a.CampaignId='$CampaignId'";
+			 
+		$qry = $this -> query($sql);
+		if( !$qry -> EOF() ){
+			$DataSize = $qry -> result_get_value('tots');	
+		}		
+			
+	/**
+     ** get atempt call data **
+     ** return data <size >
+	 **/	 
+		$size_atempt = array();
+		$Complete = array();
+		$NoPickUp = array();
+		$CallBack = array();
+		$Misscustomers = array();
+		$Agents = array();
+		
+		
+		$sql = "SELECT 
+				COUNT(distinct a.CustomerId) as Utilize, 
+				COUNT(distinct a.CreatedById) as agents,
+				COUNT(a.CustomerId) as Atempt, 
+				SUM(IF(a.CallReasonId IN(11,13,14,15,16,17,18,19,20,21,22,23,24,25,27,28,29,30,31,32,33,34),1,0)) AS Contact,
+				SUM(IF(c.CallReasonId IN(1,3,4,7,9,47,48),1,0)) as NoPickUp,
+				SUM(IF(c.CallReasonTerminate=1,1,0)) as Complete,
+				SUM(IF(a.CallReasonId IN(10,12,42,49,50),1,0)) as Callback,
+				SUM(IF(a.CallReasonId IN(10),1,0)) as Misscustomers,
+				DATE(a.CallHistoryCreatedTs) as tgl
+				FROM t_gn_callhistory a
+				LEFT JOIN t_gn_customer b on a.CustomerId=b.CustomerId
+				LEFT JOIN t_lk_callreason c on a.CallReasonId = c.CallReasonId
+				WHERE b.CampaignId='$CampaignId'
+				AND DATE(a.CallHistoryCallDate)>='$start_date'
+				AND DATE(a.CallHistoryCallDate)<='$end_date'
+				AND date(a.CallHistoryCreatedTs)>='$start_date'
+				AND date(a.CallHistoryCreatedTs)<='$end_date'
+				GROUP BY tgl ";
+				
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$totSolicited[$rows['tgl']]	 += $rows['Utilize'];
+			$size_atempt[$rows['tgl']]	 += $rows['Atempt'];
+			$SizeContact[$rows['tgl']]	 += $rows['Contact'];
+			$Complete[$rows['tgl']]		 += $rows['Complete'];
+			$NoPickUp[$rows['tgl']]		 += $rows['NoPickUp'];
+			$CallBack[$rows['tgl']]		 += $rows['Callback'];
+			$Misscustomers[$rows['tgl']] += $rows['Misscustomers'];
+			$Agents[$rows['tgl']]		 += $rows['agents'];
+		}
+		
+	/** 
+	 ** get interest policy status 
+	 ** get on customer data 
+	 **/
+		
+		$NotInterest = array(); 
+		$sql = " SELECT COUNT(a.CustomerId) as cnt,
+				 SUM(IF(a.CallReasonId IN(".$this -> _not."),1,0)) as NotInterest,
+				 DATE(a.CustomerUpdatedTs) as tgl
+				 FROM t_gn_customer a 
+				 WHERE a.CampaignId='$CampaignId'
+				 GROUP BY tgl ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{	
+			$NotInterest[$rows['tgl']]+= $rows['NotInterest'];
+		}
+		
+	/**
+     ** get Sales & Metrics **
+     ** return data <size >
+	 **/	 
+		$size_pif = array();
+		$size_anp = array();
+		$sql = "SELECT 
+					COUNT(DISTINCT a.CustomerId) AS PIF,
+					SUM(IF(e.PayModeId=2,(b.Premi*12), b.Premi)) AS ANP,
+					DATE(f.CallHistoryCreatedTs) as tgl
+				FROM t_gn_policyautogen a
+					LEFT JOIN t_gn_policy b ON a.PolicyNumber=b.PolicyNumber
+					LEFT JOIN t_gn_customer c ON a.CustomerId=c.CustomerId
+					LEFT JOIN t_gn_assignment d ON c.CustomerId=d.CustomerId
+					LEFT JOIN t_gn_productplan e ON b.ProductPlanId=e.ProductPlanId
+					LEFT JOIN t_gn_callhistory f ON c.CustomerId = f.CustomerId
+				WHERE 1=1
+					AND DATE(b.PolicySalesDate)>= '$start_date'
+					AND DATE(b.PolicySalesDate)<= '$end_date'
+					AND c.CampaignId ='$CampaignId'
+					AND c.CallReasonId IN(15,16)
+				GROUP BY tgl ";
+		
+		$qry = $this -> query($sql);
+		foreach($qry -> result_assoc() as $rows )
+		{
+			$size_pif[$rows['tgl']]+= $rows['PIF'];
+			$size_anp[$rows['tgl']]+= $rows['ANP'];
+		}
+		 
+	/** while true data looping date 
+	 ** by date filter 
+	 */	
+	 
+	 $total_solicited = 0;
+	 $total_atempt = 0;
+	 $total_callback = 0;
+	 $total_complete = 0;
+	 $total_call_iniated = 0;
+	 $total_contact = 0;
+	 $total_nopickup = 0;
+	 
+	 while(true){
+		$s_d = $start_date;
+		/** rumus perhitungan ****/
+		
+		$PercentUtilize 	= ROUND((($totSolicited[$s_d]/$DataSize) * 100),2);
+		$RatioAtempt 		= ROUND(($size_atempt[$s_d]/$totSolicited[$s_d]),2);
+		$AttemptPerComplete	= ROUND(($size_atempt[$s_d] / $Complete[$s_d]),2);
+		$AttemptPerContact	= ROUND(($size_atempt[$s_d] / $SizeContact[$s_d]),2);
+		$AvgPresentation	= ROUND((($Complete[$s_d] / $DataSize) * 100),2);
+		$CallbackLeft		= ROUND((($CallBack[$s_d] / $DataSize) * 100),2);
+		$ContactPerComplete	= ROUND((($SizeContact[$s_d] / $Complete[$s_d]) * 100),2);
+		$AARP				= ($size_anp[$s_d] / $size_pif[$s_d]);
+		$AvgPremi			= ($AARP / 12);
+		$ContactRate		= ROUND((($SizeContact[$s_d] / $totSolicited[$s_d]) * 100),2);
+		$SalesClose			= ROUND((($size_pif[$s_d] / $SizeContact[$s_d]) * 100),2);
+		$ResponseRate		= ROUND((($size_pif[$s_d] / $DataSize) * 100),2);
+		$color 				= ($this -> __week_days($s_d)?'#dddeee':'');
+		
+				echo "<tr>
+						<td nowrap class=\"content first\" align=\"center\">".$this -> formatDateId($s_d)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($DataSize?$DataSize:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($totSolicited[$s_d]?$totSolicited[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($PercentUtilize?$PercentUtilize:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($size_atempt[$s_d]?$size_atempt[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($RatioAtempt?$RatioAtempt:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".$AttemptPerComplete."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".$AttemptPerContact."</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($Complete[$s_d]?$Complete[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".$AvgPresentation." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($CallBack[$s_d]?$CallBack[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($CallbackLeft?$CallbackLeft:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($SizeContact[$s_d]?$SizeContact[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($ContactPerComplete?$ContactPerComplete:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($NotInterest[$s_d]?$NotInterest[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($Misscustomers[$s_d]?$Misscustomers[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($NoPickUp[$s_d]?$NoPickUp[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($size_pif[$s_d]?$size_pif[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($AARP?$AARP:0))."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($size_anp[$s_d]?$size_anp[$s_d]:0))."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".formatRupiah(($AvgPremi?$AvgPremi:0))."</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($ContactRate?$ContactRate:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($SalesClose?$SalesClose:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($ResponseRate?$ResponseRate:0)." %</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">".($Agents[$s_d]?$Agents[$s_d]:0)."</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content middle\" align=\"center\">&nbsp;</td>
+						<td nowrap class=\"content lasted\" align=\"center\">&nbsp;</td>
+				  </tr>";
+					
+				/** 
+				 ** calculation footer 
+				 ** for next step 
+				 **/
+					 
+					$total_datasize += $DataSize;
+					$total_solicited += $totSolicited[$s_d];
+					$total_atempt += $size_atempt[$s_d];
+					$total_callback += $CallBack[$s_d];
+					$total_complete += $Complete[$s_d];
+					$total_contact += $SizeContact[$s_d];
+					$total_nopickup += $Complete[$s_d];
+					$total_not_interest += $NotInterest[$s_d];
+					$total_miss_cust += $Misscustomers[$s_d];
+					$total_npu += $NoPickUp[$s_d];
+					$total_pif += $size_pif[$s_d];
+					$total_anp += $size_anp[$s_d];
+					$total_agent += $Agents[$s_d];
+					
+				  if( $start_date == $end_date ) break;
+						$start_date = $this -> nextDate($start_date);
+					
+					
+					
+			}
+			/** hitung rata-rata
+			 ** solicted data dbase
+			 **/
+				$avg_call_utilize   	= ROUND((($total_solicited/$DataSize)*100),2);
+				$avg_call_atempt    	= ROUND((($total_atempt/$total_solicited)),2);
+				$avg_attempt_complete	= ROUND(($total_atempt / $total_complete),2);
+				$avg_attempt_contact	= ROUND(($total_atempt / $total_contact),2);
+				$avg_complete_penetrate	= ROUND((($total_complete / $DataSize) * 100),2);
+				$avg_callback_left		= ROUND((($total_callback / $DataSize) * 100),2);
+				$avg_contact_complete	= ROUND((($total_contact / $total_complete) * 100),2);
+				$avg_aarp				= ($total_anp / $total_pif);
+				$avg_premium			= ($avg_aarp / 12);
+				$avg_call_contact   	= ROUND((($total_contact/$total_solicited)*100),2);
+				$avg_sales_close		= ROUND((($total_pif / $total_contact) * 100),2);
+				$avg_response			= ROUND((($total_pif / $DataSize) * 100),2);
+				$avg_call_complete  	= ROUND((($total_complete/$total_solicited)*100),2);
+				$avg_call_pickup    	= ROUND((($total_nopickup/$total_solicited)*100),2);
+				$avg_call_callback  	= ROUND((($total_callback/$total_solicited)*100),2);
+				
+			echo "<tr>
+					<td nowrap class=\"total first\" align=\"center\">MTD</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_datasize?$total_datasize:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_solicited?$total_solicited:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_utilize?$avg_call_utilize:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_atempt?$total_atempt:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_atempt?$avg_call_atempt:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_complete?$avg_attempt_complete:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_attempt_contact?$avg_attempt_contact:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_complete?$total_complete:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_complete_penetrate?$avg_complete_penetrate:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_callback?$total_callback:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_callback_left?$avg_callback_left:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_contact?$total_contact:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_contact_complete?$avg_contact_complete:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_not_interest?$total_not_interest:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_miss_cust?$total_miss_cust:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_npu?$total_npu:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_pif?$total_pif:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_aarp?$avg_aarp:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($total_anp?$total_anp:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".formatRupiah(($avg_premium?$avg_premium:0))."</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_call_contact?$avg_call_contact:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_sales_close?$avg_sales_close:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($avg_response?$avg_response:0)." %</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">".($total_agent?$total_agent:0)."</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total middle\" align=\"center\">&nbsp;</td>
+					<td nowrap class=\"total lasted\" align=\"center\">&nbsp;</td>
+				</tr> </table><br>";
+		}
+		
+		//$this -> view_filter();
+		
+	}
+	
+	private function _footer(){
+		echo "<tr>
+				<td nowrap class=\"total first\" align=\"right\">Summary</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$DataSize}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_solicited}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_utilize} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_atempt}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_atempt}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_call_iniated}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_iniated} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_contact}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_contact} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_complete}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_complete} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_machine}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_machine} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$total_nopickup}</td>
+				<td nowrap class=\"total middle\" align=\"right\">{$avg_call_pickup} %</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total middle\" align=\"right\">&nbsp;</td>
+				<td nowrap class=\"total lasted\" align=\"right\">&nbsp;</td>
+			</tr> ";
+	}
+}
+?>
+<!--- EOF -->

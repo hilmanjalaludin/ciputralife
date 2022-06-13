@@ -1,0 +1,292 @@
+/** **/
+@import url("custom.icon.css");
+@import url("custom.grid.css");
+
+.subcontent td{font-size:13px;}
+.subcontent input {
+	color:#000;border:1px solid #ddd;
+	background:url('../gambar/square-blue-right.gif') no-repeat top left;
+	width:200px;
+	height:20px;
+ }
+ .top-content fieldset{border:1px dotted #ddd;height:400px;}
+ .top-content legend{color:red;font-weight:normal;font-size:15px;}
+ .subcontent select {
+	color:#000;border:1px solid #ddd;
+	background:url('../gambar/square-blue-right.gif') no-repeat top left;
+	width:200px;
+	height:24px;
+ }
+ .corner{border:1px solid #dddddd;padding-top:3px;}
+  .corner legend {font-size:13px;color:#024284;}
+.subcontent button {
+	color:#000;border:1px solid #ddd;
+	background:url('../gambar/side_col_bg.png') no-repeat top left;
+	width:75px;height:24px;}
+	
+.contact_detail legend{color:red;font-size:14px;}
+	.call_activity {height:auto;border:1px solid #dddddd;margin-top:-10px;}
+	.call_phone{border:1px solid #dddddd;margin-top:10px;}
+	.call_activity legend {color:red;font-size:12px;}
+	.call_phone legend{ color:red;font-size:12px;}
+	.call_activity b{color:#024284;font-weight:normal;font-family:arial;}
+	.call_phone b{color:#024284;font-weight:normal;font-family:arial;}		
+
+#pager{
+	background:url('../gambar/pager_bg.png'); 
+	margin-left:6px;border:1px solid #ddd;
+	margin-top:-5;
+	height:30px;
+	margin-right:6px;
+	padding-left:4px;
+	padding-top:4px;
+}
+
+
+div.toolbars{
+	background:url('../gambar/pager_bg.png'); 
+	margin-left:6px;
+	border:1px solid #ddd;
+	height:30px;
+	margin-right:6px;
+	padding-left:4px;
+	padding-top:2px;
+}
+
+div.toolbars input{
+	border:1px solid #ADD8E6;
+	font-family:Arial;
+	color:#696969;
+	font-size:12px;
+	margin-right:6px;
+	margin-bottom:8px;
+	background:url('../gambar/input.gif');
+	background-position:80% 20%; 
+	height:19px;
+	padding-left:4px;
+	margin-top:-6px;	
+}
+
+div.toolbars select{
+	border:1px solid #ADD8E6;
+	font-family:Arial;
+	color:#696969;
+	font-size:11px;
+	margin-right:6px;
+	margin-bottom:8px;
+	background:url('../gambar/input.gif');
+	background-position:80% 20%; 
+	height:20px;
+	padding-left:3px;
+	margin-top:-6px;	
+}
+div.toolbars b{
+	font-family:Arial;
+	color:red;
+	font-size:11px;	
+	font-weight:normal;
+	
+}
+
+#toolbars{
+	background:url('../gambar/pager_bg.png'); 
+	margin-left:6px;
+	border:1px solid #ddd;
+	height:30px;
+	margin-right:6px;
+	padding-left:4px;
+	padding-top:2px;
+}
+
+#toolbars input{
+	border:1px solid #ADD8E6;
+	font-family:Arial;
+	color:#696969;
+	font-size:12px;
+	margin-right:6px;
+	margin-bottom:8px;
+	background:url('../gambar/input.gif');
+	background-position:80% 20%; 
+	height:19px;
+	padding-left:4px;
+	margin-top:-6px;	
+}
+
+#toolbars select{
+	border:1px solid #ADD8E6;
+	font-family:Arial;
+	color:#696969;
+	font-size:11px;
+	margin-right:6px;
+	margin-bottom:8px;
+	background:url('../gambar/input.gif');
+	background-position:80% 20%; 
+	height:20px;
+	padding-left:3px;
+	margin-top:-6px;	
+}
+#toolbars b{
+	font-family:Arial;
+	color:red;
+	font-size:11px;	
+	font-weight:normal;
+	
+}
+
+#customer_panel{
+	margin-top:10px;
+	padding-bottom:8px;
+}
+
+.box-shadow{
+	padding:2px;-moz-box-shadow: 10px 10px 5px #888;
+	-webkit-box-shadow: 10px 10px 5px #888;
+	box-shadow: 2px 2px 5px #888;
+	border:1px solid #eeeeee;
+	margin:4px;
+	padding:2px;
+}
+.sub_main_content th{
+	color:#5a5956;
+	text-align:right;
+	font-size:12px;
+	height:22px;
+	font-family:Arial;
+}
+.sub_main_content td{
+	padding-left:2px;
+	font-family:Arial;
+	font-size:11px;
+}
+.sub_main_content input{ 
+	padding-left:2px;
+	border:1px solid #a2a096;
+	font-family:Arial;
+	font-size:11px;
+	background-color:#fffccc;
+}
+.sub_main_content chekcbox {
+	text-align:right;
+	font-size:11px;
+	height:22px;
+	font-family:Arial;
+	background-color:#fffccc;
+	
+}
+.content_th_top{background-color:#FFFFFF;}
+.sub_main_content select {
+
+	font-family:Arial;
+	border:1px solid #a2a096;
+	font-size:11px;
+	height:20px;
+	background-color:#fffccc;
+}			
+
+.sub_main_content textarea{
+	border:1px solid #a2a096;
+	font-size:11px;
+	overflow:'hidden';
+	background-color:#fffccc;
+	
+}
+.contact_detail fieldset{border:1px solid #dddddd;background-color:#FFFFFF;font-family:Arial;font-size:11px;}
+.h3{ 
+	float:right;padding-left:6px;width:200px;
+	margin-left:5px;margin-top:5px;
+	margin-bottom:20px;color:#746b6a;
+}
+
+
+/** message css box **/
+
+#message-body{
+	background:url('../gambar/pager_bg.png') repeat-x; 
+	text-align:left;
+	font-family:Arial;
+	padding-top:5px;
+	border:0px solid #000;
+}
+#text-title{
+	margin-top:-10px;
+	margin-left:3px;
+	font-size:12px;
+	font-weight:bold;
+	color:green;
+	
+}
+#message-title{
+	padding-top:5px;
+}
+#content-msg{ 
+	border:1px solid #dddddd;height:200px;
+	margin-top:5px;
+	background-color:#fffccc;
+	text-align:Justify;
+	color:green;
+	margin-left:5px;
+	margin-right:5px;
+	margin-bottom:5px;
+	line-height:16px;
+	font-size:11px;
+	width:315px;
+	padding:4px;
+	word-wrap: break-word;
+}
+
+
+	/* START CSS NEEDED ONLY IN DEMO */
+	
+	#mainContainer{
+		width:760px;
+		margin:0 auto;
+		text-align:left;
+		height:100%;
+		background-color:#FFF;
+		border-left:3px double #000;
+		border-right:3px double #000;
+	}
+	#formContent{
+		padding:5px;
+	}
+	/* END CSS ONLY NEEDED IN DEMO */
+
+
+	/* Big box with list of options */
+	#ajax_listOfOptions{
+		position:absolute;	/* Never change this one */
+		width:175px;	/* Width of box */
+		height:250px;	/* Height of box */
+		overflow:auto;	/* Scrolling features */
+		border:1px solid #317082;	/* Dark green border */
+		background-color:#FFF;	/* White background color */
+		text-align:left;
+		font-size:0.9em;
+		z-index:100;
+	}
+	#ajax_listOfOptions div{	/* General rule for both .optionDiv and .optionDivSelected */
+		margin:1px;
+		padding:1px;
+		cursor:pointer;
+		font-size:12px;
+		
+	}
+	#ajax_listOfOptions .optionDiv{	/* Div for each item in list */
+
+	}
+	#ajax_listOfOptions .optionDivSelected{ /* Selected item in the list */
+		background-color:#317082;
+		color:#FFF;
+	}
+	#ajax_listOfOptions_iframe{
+		background-color:#F00;
+		position:absolute;
+		z-index:5;
+	}
+
+	form{
+		display:inline;
+	}
+	img{
+		border:0px;
+	}

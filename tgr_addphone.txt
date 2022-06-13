@@ -1,0 +1,7 @@
+CREATE DEFINER=`root`@`localhost` TRIGGER `tgr_addphone` AFTER INSERT ON `t_gn_addphone` FOR EACH ROW BEGIN
+update t_gn_customer c set
+	c.CustomerWorkPhoneNum2=IF(NEW.AddPhoneType=2,NEW.AddPhoneNumber,c.CustomerWorkPhoneNum2),
+	c.CustomerHomePhoneNum2=IF(NEW.AddPhoneType=1,NEW.AddPhoneNumber,c.CustomerHomePhoneNum2),
+	c.CustomerMobilePhoneNum2=IF(NEW.AddPhoneType=3,NEW.AddPhoneNumber,c.CustomerMobilePhoneNum2)
+	where c.CustomerId=NEW.CustomerId;
+END

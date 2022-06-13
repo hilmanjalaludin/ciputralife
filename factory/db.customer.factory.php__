@@ -1,0 +1,345 @@
+<?php
+
+class Customer extends mysql{
+
+function Customer(){
+
+}
+
+/**
+ ** get data policy factory Method
+ ** render all queries data & all
+ ** attribut 
+ ** return < object >
+ **/ 
+ 
+
+function DataPolicy($CustomerId)
+ {
+	$Payers 	= " SELECT a.*, b.*, 
+						a.ProvinceId as PayerProvinceId, a.SalutationId as PayerSalutationId, 
+						a.RelationshipTypeId as PayerRelationshipTypeId 
+					FROM t_gn_payer a LEFT JOIN t_gn_insured b on a.CustomerId=b.CustomerId  
+					WHERE a.CustomerId='$CustomerId'";//AND a.PayerDOB=b.InsuredDOB "?; 
+	
+	$Insured 	= " SELECT a.* FROM t_gn_insured a where a.CustomerId='$CustomerId' ORDER BY a.InsuredId ASC ";
+	$Holder 	= " SELECT a.* FROM t_gn_insured a where a.CustomerId='$CustomerId' AND a.PremiumGroupId=2 ORDER BY a.InsuredId ASC ";
+	$Spouse 	= " SELECT a.* FROM t_gn_insured a where a.CustomerId='$CustomerId' AND a.PremiumGroupId=3 ORDER BY a.InsuredId ASC ";
+	$Dependent 	= " SELECT a.* FROM t_gn_insured a where a.CustomerId='$CustomerId' AND a.PremiumGroupId=1 ORDER BY a.InsuredId ASC ";
+	$Beneficery = " SELECT a.*,c.*,d.* FROM t_gn_beneficiary a
+					LEFT JOIN t_lk_gender c on a.GenderId=c.GenderId
+					LEFT JOIN t_lk_relationshiptype d on a.RelationshipTypeId=d.RelationshipTypeId 
+					WHERE a.CustomerId = '$CustomerId'";
+	$Policy 	= " SELECT a.InsuredId, b.*, c.* ,d.*,e.*,f.*
+					FROM t_gn_insured a 
+					LEFT JOIN t_gn_policy b ON a.PolicyId=b.PolicyId 
+					LEFT JOIN t_gn_productplan c ON b.ProductPlanId=c.ProductPlanId 
+					LEFT JOIN t_lk_paymode d on c.PayModeId=d.PayModeId
+					LEFT JOIN t_lk_gender e on a.GenderId=e.GenderId
+					LEFT JOIN t_lk_relationshiptype f on a.RelationshipTypeId=f.RelationshipTypeId
+					WHERE a.CustomerId='$CustomerId' ORDER BY a.InsuredId ASC ";
+	// echo $Payers;					
+	$Customer = " select * from t_gn_customer a where a.CustomerId='$CustomerId'";
+	
+	$sql = array
+	   (
+			'Payers' => $Payers, 
+			'Insured' => $Insured, 
+			'Beneficery' => $Beneficery, 
+			'Policy' => $Policy, 
+			'Customer' => $Customer,
+			'Holder' => $Holder,
+			'Spouse' => $Spouse,
+			'Dependent' => $Dependent
+		);
+	
+	if( !is_array($sql))  return null;
+	else{
+		foreach($sql as $ClassName => $query ){
+			$data[$ClassName]= $this -> query($query);	
+		}
+	}
+	return $data;
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function RelationshipType()
+ {
+	$sql = " select a.RelationshipTypeId, a.RelationshipTypeDesc FROM t_lk_relationshiptype a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['RelationshipTypeId']] = $rows['RelationshipTypeDesc'];
+	}
+	return $datas; 	
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function PremiumGroup()
+ {
+	$sql = " select a.PremiumGroupId, a.PremiumGroupDesc FROM t_lk_premiumgroup a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['PremiumGroupId']] = $rows['PremiumGroupDesc'];
+	}
+	return $datas; 	
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function Salutation()
+ {
+	$sql = " select a.SalutationId, a.Salutation FROM t_lk_salutation a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['SalutationId']] = $rows['Salutation'];
+	}
+	return $datas; 	
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function Paymode()
+ {
+	$sql = " SELECT a.PayModeId, a.PayMode FROM t_lk_paymode a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['PayModeId']] = $rows['PayMode'];
+	}
+	return $datas; 	
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+function Gender()
+ {
+	$sql = " SELECT a.GenderId, a.Gender FROM t_lk_gender a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['GenderId']] = $rows['Gender'];
+	}
+	return $datas; 	
+ }
+ 
+  
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function Province()
+ {
+	$sql = " SELECT a.ProvinceId, a.Province FROM t_lk_province a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['ProvinceId']] = $rows['Province'];
+	}
+	return $datas; 	
+	 
+ }
+ 
+  
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function IndentificationId()
+ {
+	$sql = " SELECT a.IdentificationTypeId, a.IdentificationType FROM t_lk_identificationtype a ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['IdentificationTypeId']] = $rows['IdentificationType'];
+	}
+	return $datas;
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function Bank()
+ {
+	$sql = " SELECT a.* FROM t_lk_bank a where a.BankStatusFlag=1";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['BankId']] = $rows['BankName'];
+	}
+	return $datas;
+ }
+ 
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function CardType()
+ {
+	$sql =" select a.CreditCardTypeId,a.CreditCardTypeDesc from t_lk_creditcardtype a";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['CreditCardTypeId']] = $rows['CreditCardTypeDesc'];
+	}
+	return $datas;
+ }
+ 
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+ function ProductId( $CampaignId=0 ){
+	$sql = " SELECT a.ProductId, a.ProductName 
+			 FROM t_gn_product a left join t_gn_campaignproduct b on a.ProductId=b.ProductId
+			 WHERE b.CampaignId='$CampaignId'";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['ProductId']] = $rows['ProductName'];
+	}
+	return $datas;
+}
+  
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+function PaymentTypeId()
+{
+	$sql =" select a.PaymentTypeId,a.PaymentTypeDesc from t_lk_paymenttype a ";
+	$qry = $this ->query($sql);
+	foreach($qry -> result_assoc() as $rows )
+	{
+		$datas[$rows['PaymentTypeId']] = $rows['PaymentTypeDesc'];
+	}
+	return $datas;		
+}
+  
+ /**
+  ** get lookup Relation Of customer
+  ** define of user
+  ** return < array >
+  **/
+  
+function ProductPlanId($CampaignId=0){
+	$sql= " SELECT c.ProductPlan, c.ProductPlanName
+			from t_gn_product a left join t_gn_campaignproduct b on a.ProductId=b.ProductId
+			left join t_gn_productplan c on a.ProductId=c.ProductId
+			where b.CampaignId='$CampaignId'
+			group by c.ProductPlan ";
+	$qry = $this -> query($sql);
+	foreach($qry -> result_assoc() as $rows ){
+		$datas[$rows['ProductPlan']] = $rows['ProductPlanName'];
+	}
+	return $datas;
+}
+
+/**
+ ** function get Campaign Name 
+ ** Rnder By CampaignId 
+ ** return < string >
+ **/ 
+ 
+ public function _CampaignName($_CampaignId=0 )
+ {
+	$_conds = 0;
+	$sql = " SELECT a.CampaignName FROM t_gn_campaign a 
+			 WHERE a.CampaignId = '$_CampaignId'"; 
+	$qry = $this -> query($sql);
+	if( !$qry -> EOF() )
+	{
+		$_conds = $qry -> result_get_value("CampaignName");
+	}
+	
+	return $_conds;
+}
+ 
+ /**
+ ** function get Agent name  
+ ** render By Customer Id
+ ** return < string >
+ **/ 
+ 
+ function TotalPremi( $CustomerId=0 )
+ {
+	$sql = " select sum(b.Premi) as jumlah from t_gn_policyautogen a 
+			left join t_gn_policy b on a.PolicyNumber=b.PolicyNumber
+			where a.CustomerId='$CustomerId' ";
+	$qry = $this -> query($sql);
+	return (INT)$qry -> result_get_value("jumlah");
+ }
+ 
+  
+ /**
+ ** function get Agent name  
+ ** render By Customer Id
+ ** return < string >
+ **/ 
+ 
+ public function SellerId( $_CustomerId=0,$_Class)
+ {
+	parent::__construct();
+	
+	$_conds = 0;
+	$_SellerId = 0;
+	$sql = "SELECT a.*, c.AssignSelerId 
+			FROM t_gn_policyautogen a 
+			LEFT JOIN t_gn_customer b on a.CustomerId=b.CustomerId
+			LEFT JOIN t_gn_assignment c on b.CustomerId=c.CustomerId
+			where a.CustomerId='$_CustomerId' ";
+
+	$qry = $this -> query($sql);
+	if( !$qry -> EOF() )
+	{
+		$_conds = $qry -> result_get_value("AssignSelerId");
+		if( $_conds ){
+			$_SellerId = $this -> Users -> getUsers( $_conds );
+		}
+	}
+	
+	return $_SellerId;
+	
+ }
+ 
+}
+
+?>

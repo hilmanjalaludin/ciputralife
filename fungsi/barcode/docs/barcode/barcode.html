@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class barcode</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class barcode</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This class is intented to display a barcode as a image, for printing in business documents.</p>
+<p class="description"><p>The basic functionality allows to create a image (PNG, GIF or JPEG) from a given text string.  By default this class uses a free Code39 Font to generate a barcode. It's possible to use any font that you want, feel free to parametrize.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> H4</li>
+				<li><span class="field">version:</span> 20091105220800</li>
+				<li><span class="field">license:</span> LGPL</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_barcode.class.php.html">/barcode.class.php</a> (line <span class="field">12</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#DEFAULT_FONT_FAMILY" title="details" class="const-name">DEFAULT_FONT_FAMILY</a> = 					<span class="var-type"> &quot;./fonts/free3of9.ttf&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#ERROR_SAVE_BAD_TYPE" title="details" class="const-name">ERROR_SAVE_BAD_TYPE</a> = 					<span class="var-type"> &quot;Tipo de Imágen incorrecto.&quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#ERROR_SAVE_GIF" title="details" class="const-name">ERROR_SAVE_GIF</a> = 					<span class="var-type"> &quot;NO se puede crear el Archivo GIF &quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#ERROR_SAVE_JPEG" title="details" class="const-name">ERROR_SAVE_JPEG</a> = 					<span class="var-type"> &quot;NO se puede crear el Archivo JPG &quot;</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../media/images/Constant.png" alt=" " />
+					<a href="#ERROR_SAVE_PNG" title="details" class="const-name">ERROR_SAVE_PNG</a> = 					<span class="var-type"> &quot;NO se puede crear el Archivo PNG &quot;</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																								<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$error" title="details" class="var-name">$error</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$extension" title="details" class="var-name">$extension</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$font_family" title="details" class="var-name">$font_family</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$font_width_relation" title="details" class="var-name">$font_width_relation</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$image_resource" title="details" class="var-name">$image_resource</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$path" title="details" class="var-name">$path</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">mixed</span>
+					<a href="#$type" title="details" class="var-name">$type</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																						
+				<div class="method-definition">
+											<span class="method-result">barcode</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">&quot;png&quot;</span>], [<span class="var-type">integer</span>&nbsp;<span class="var-name">$resolution</span> = <span class="var-default">72</span>], [<span class="var-type">bool|string</span>&nbsp;<span class="var-name">$font_family</span> = <span class="var-default">false</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$relation</span> = <span class="var-default">0.13</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">bool</span>
+										<a href="#image_create" title="details" class="method-name">image_create</a>
+											([<span class="var-type">string</span>&nbsp;<span class="var-name">$text</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$size</span> = <span class="var-default">array(240,24)</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$angle</span> = <span class="var-default">0</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$fontsize</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$text_color</span> = <span class="var-default">array(0,0,0)</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$fill_color</span> = <span class="var-default">array(255,255,255)</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#save_file" title="details" class="method-name">save_file</a>
+											([<span class="var-type">bool|string</span>&nbsp;<span class="var-name">$path</span> = <span class="var-default">false</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">&quot;png&quot;</span>])
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#show" title="details" class="method-name">show</a>
+										()
+									</div>
+														
+				<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#__destroy" title="details" class="method-name">__destroy</a>
+										()
+									</div>
+											</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			
+<a name="var$error" id="$error"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$error</span>
+						(line <span class="line-number">26</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$extension" id="$extension"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$extension</span>
+						(line <span class="line-number">24</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$font_family" id="$font_family"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$font_family</span>
+						(line <span class="line-number">22</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$font_width_relation" id="$font_width_relation"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$font_width_relation</span>
+						(line <span class="line-number">23</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$image_resource" id="$image_resource"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$image_resource</span>
+						(line <span class="line-number">25</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$path" id="$path"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$path</span>
+						(line <span class="line-number">28</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$type" id="$type"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">mixed</span>
+			<span class="var-name">$type</span>
+						(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">37</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Instantiates a barcode class, that generate a image barcode from a given string, using a TTF font.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">barcode</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">&quot;png&quot;</span>], [<span class="var-type">integer</span>&nbsp;<span class="var-name">$resolution</span> = <span class="var-default">72</span>], [<span class="var-type">bool|string</span>&nbsp;<span class="var-name">$font_family</span> = <span class="var-default">false</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$relation</span> = <span class="var-default">0.13</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: Defines the image type or format. Valid values PNG, GIF and JPEG. Default PNG.</span>			</li>
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$resolution</span><span class="var-description">: Only for JPEG. Defines the image resolution. For the others formats, has no effects.</span>			</li>
+					<li>
+				<span class="var-type">bool|string</span>
+				<span class="var-name">$font_family</span><span class="var-description">: If false, then the class uses the default font especified at barcode::DEFAULT_FONT_FAMILY. If a valid string that match a font path (may be relative), uses the parametrized font.</span>			</li>
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$relation</span><span class="var-description">: Relation between image width and font size width. Only used if &quot;barcode::image_create fontsize&quot; is false.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodimage_create" id="image_create"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">image_create</span> (line <span class="line-number">71</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method creates the output image resource. After that, you can show() or save_file().</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> True if the image was created. Otherwise False.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">bool</span>
+		<span class="method-name">
+			image_create
+		</span>
+					([<span class="var-type">string</span>&nbsp;<span class="var-name">$text</span> = <span class="var-default">&quot;&quot;</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$size</span> = <span class="var-default">array(240,24)</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$angle</span> = <span class="var-default">0</span>], [<span class="var-type">float</span>&nbsp;<span class="var-name">$fontsize</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$text_color</span> = <span class="var-default">array(0,0,0)</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$fill_color</span> = <span class="var-default">array(255,255,255)</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$text</span><span class="var-description">: The text string to encoded.</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$size</span><span class="var-description">: The image size as an array(width,height).</span>			</li>
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$angle</span><span class="var-description">: The angle for the barcode. Useful for vertical (90 or 270) barcode.</span>			</li>
+					<li>
+				<span class="var-type">float</span>
+				<span class="var-name">$fontsize</span><span class="var-description">: The font size to use to encode the text string. If not set, the class uses the param $relation of a constructor.</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$text_color</span><span class="var-description">: The font (barcode) color as an array(Red,Green,Blue).</span>			</li>
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$fill_color</span><span class="var-description">: The background color as an array(Red,Green,Blue).</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsave_file" id="save_file"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">save_file</span> (line <span class="line-number">107</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method saves a image resource to a file. It's posible to select a image type, that can differs from the $type at contructor parametrized.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			save_file
+		</span>
+					([<span class="var-type">bool|string</span>&nbsp;<span class="var-name">$path</span> = <span class="var-default">false</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">&quot;png&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">bool|string</span>
+				<span class="var-name">$path</span><span class="var-description">: If false, or not especified, then the file name is automaticaly generated.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$type</span><span class="var-description">: The image type that will save.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodshow" id="show"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">show</span> (line <span class="line-number">133</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This method show in a browser the image generated by barcode::image_create().</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			show
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="method__destroy" id="__destroy"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">__destroy</span> (line <span class="line-number">147</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">At script's finish, the image resource is destroyed.</p>
+<p class="description"><p>However you can call this method at any time, if necessary.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			__destroy
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constDEFAULT_FONT_FAMILY" id="DEFAULT_FONT_FAMILY"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">DEFAULT_FONT_FAMILY</span>
+			 = <span class="const-default"> &quot;./fonts/free3of9.ttf&quot;</span>
+			(line <span class="line-number">20</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constERROR_SAVE_BAD_TYPE" id="ERROR_SAVE_BAD_TYPE"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">ERROR_SAVE_BAD_TYPE</span>
+			 = <span class="const-default"> &quot;Tipo de Imágen incorrecto.&quot;</span>
+			(line <span class="line-number">19</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constERROR_SAVE_GIF" id="ERROR_SAVE_GIF"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">ERROR_SAVE_GIF</span>
+			 = <span class="const-default"> &quot;NO se puede crear el Archivo GIF &quot;</span>
+			(line <span class="line-number">17</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constERROR_SAVE_JPEG" id="ERROR_SAVE_JPEG"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">ERROR_SAVE_JPEG</span>
+			 = <span class="const-default"> &quot;NO se puede crear el Archivo JPG &quot;</span>
+			(line <span class="line-number">16</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">This section allows you to modify the default font and errors messages.</p>
+	
+	
+</div>
+<a name="constERROR_SAVE_PNG" id="ERROR_SAVE_PNG"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">ERROR_SAVE_PNG</span>
+			 = <span class="const-default"> &quot;NO se puede crear el Archivo PNG &quot;</span>
+			(line <span class="line-number">18</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Thu, 12 Nov 2009 03:39:29 -0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

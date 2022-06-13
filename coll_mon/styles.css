@@ -1,0 +1,70 @@
+			.extToolbars{
+				font-family:Arial;
+				font-size:11px;
+				color:silver;
+				background:url('icon/pager_bg.png'); 
+				
+			}
+			.extToolbars input{
+				font-family:Arial;
+				font-size:12px;
+				background:url('icon/input.gif');
+				border:1px solid #dddddd;
+				color:red;
+				margin-right:2px;
+				height:16px;
+			}
+		
+			#toolbars2 input{
+				border:1px solid #ADD8E6;
+				font-family:Arial;
+				color:#696969;
+				font-size:12px;
+				margin-right:6px;
+				margin-bottom:1px;
+				background:url('../icon/input.gif');
+				background-position:80% 20%; 
+				margin-right:2px;
+				height:16px;
+			}
+
+			#toolbars2 select{
+				border:1px solid #ADD8E6;
+				font-family:Arial;
+				color:#696969;
+				font-size:11px;
+				margin-right:6px;
+				margin-bottom:0px;
+				background:url('../icon/input.gif');
+				background-position:80% 20%; 
+				height:20px;
+				padding-left:3px;
+				margin-top:-6px;	
+			}
+			#toolbars2 b{
+				font-family:Arial;
+				color:#8a898b;
+				font-size:11px;	
+				font-weight:normal;
+				
+			}
+			
+			#toolbars2 a{
+				font-family:Arial;
+				color:#8a898b;
+				font-size:11px;	
+				font-weight:normal;
+				
+			}
+			
+		
+		#toolbars2{
+			margin-top:-10px;
+			border:1px solid #ddd;
+			color:red;
+			width:'100%';
+			margin-bottom:3px;
+		}
+		
+		.content-text{font-size:12px;text-align:right;border-bottom:1px solid #eeeeee;padding-right:7px;}
+		.header{background-color:#EEEEBB;font-weight:bold;color:red;}

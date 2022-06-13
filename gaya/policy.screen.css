@@ -1,0 +1,41 @@
+@import url("custom.css");
+@import url("gaya_utama.css");
+@import url("other.css");
+@import url("screen.css");
+
+.text_header{ font-family:Arial;  font-size:12px; font-weight:normal; color: #330099; height:24px; }
+.input_age { height:18px;background:url('../gambar/input_bg.png');width:50px; border:1px solid red;font-size:11px;}
+.input { padding-left:2px;height:18px;background:url('../gambar/input_bg.png');border:1px solid #FF0033;font-size:11px; width:100%}	
+.textarea{ padding-left:2px;height:50px;border:1px solid #FF0033;font-size:11px; width:100%;resize:none; }
+.select{ height:22px;background:url('../gambar/input_bg.png');border:1px solid #FF0033;font-size:11px;}
+.long{ width:180px;}
+.small {width:80px;}
+.box{ width:50px;}
+.value_group { text-align:center;}
+.header_table { font-family:Trebuchet MS; padding-right:5px;font-size:12px; font-weight:normal; color: #333333; height:24px; text-align:right; }
+.question_table { font-family:Trebuchet MS; padding-right:5px;font-size:12px; font-weight:normal; color: #333333; height:24px; text-align:left; }
+p{ font-size:12px;color:white;font-weight:bold;background-color:#0099FF;width:300px;padding:5px;margin-top:8px;margin-bottom:8px;}
+h4{ background-color:#eeeeee;padding-left:4px;font-size:14px;}
+span.wrap{ font-size:9px;color:red;}
+.required{ color:red;}
+input[type=checkbox] { 
+height: 1.2em;
+width: 1.2em;
+vertical-align: middle;
+margin: 0 0.4em 0.4em 0;
+border: 1px solid rgba(0, 0, 0, 0.3);
+background: -webkit-linear-gradient(#FCFCFC, #DADADA);
+-webkit-appearance: none;
+-webkit-transition: box-shadow 200ms;
+box-shadow:inset 1px 1px 0 #fff, 0 0 4px rgba(0,0,0,0.3);
+ -webkit-border-radius:2px;
+border-radius:2px;
+}
+
+.header-first { border-left:1px solid #dddddd;border-right:0px; background-color:#0099FF;color:white;font-family:Trebuchet MS;font-size:12px;font-weight:bold;height:22px;}
+.header-last { border-left:1px solid #dddddd;border-right:1px solid #dddddd; background-color:#0099FF;color:white;font-family:Trebuchet MS;font-size:12px;font-weight:bold;height:22px;}
+.rows-first { background-color:#ffffff;border-left:1px solid #dddddd;border-right:0px; border-top:1px solid #dddddd; font-family:Trebuchet MS;font-size:11px;font-weight:normal;height:20px;}
+.rows-last { background-color:#ffffff;border-left:1px solid #dddddd;border-right:1px solid #dddddd; border-top:1px solid #dddddd; font-family:Trebuchet MS;font-size:11px;font-weight:normal;height:20px;}
+
+
+				

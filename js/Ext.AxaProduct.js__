@@ -1,0 +1,759 @@
+/* @ def 	:  define of Global dependent input if not followed !, Try on window object
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+// define dependent field
+ Ext.DOM._benefiecery = {
+	field :[
+		 'BenefRelationshipTypeId', 
+		 'BenefSalutationId', 
+		 'BenefFirstName', 
+		 'BenefLastName', 
+		 'BenefPercentage'
+		],
+		 
+	chars : 'Be',
+	code  : 0
+ }	
+/* @ def 	:  define of Global dependent input if not followed !, Try on window object
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+// define dependent field
+ Ext.DOM._dependent = {
+	field :[
+		 'DepPaymode', 
+		 'DepMemberOf',
+		 'DepRelationshipTypeId', 
+		 'DepSalutationId', 
+		 'DepPlanType', 
+		 'DepFirstName', 
+		 'DepPremi', 
+		 'DepLastName', 
+		 'DepGenderId', 
+		 'DepDOB', 
+		 'DepAge'],
+		 
+	chars : 'De',
+	code  : 1
+ }	
+/* @ def 	:  define of Global dependent input if not followed !, Try on window object
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+// define spouse field
+ Ext.DOM._Spouse = {
+	field : [
+		'SpIdentificationTypeId',
+		'SpPaymode',
+		'SpIdentificationNum',
+		'SpPlanType',
+		'SpRelationshipTypeId',
+		'SpPremi',
+		'SpSalutationId',
+		'SpFirstName',
+		'SpLastName',
+		'SpGenderId',
+		'SpDOB',
+		'SpAge'],
+		
+	chars : 'Sp',
+	code  : 3
+ }
+// define holder field
+ Ext.DOM._Holder = {
+	field :[
+		'HoldIdentificationTypeId',
+		'HoldPayMode',
+		'HoldIdentificationNum',
+		'HoldPlanType',
+		'HoldRelationshipTypeId',
+		'HoldPremi',
+		'HoldSalutationId',
+		'HoldFirstName',
+		'HoldLastName',
+		'HoldGenderId',
+		'HoldDOB',
+		'HoldAge'],
+		
+	chars : 'Ho',		
+	code  : 2
+ }	
+// define payers field
+ Ext.DOM._PayersData = [
+	'PayerSalutationId',
+	'PayerFirstName',
+	'PayerLastName',
+	'PayerGenderId',
+	'PayerDOB', 
+	'PayerAddressLine1',
+	'PayerIdentificationTypeId',
+	'PayerIdentificationNum',
+	'PayerMobilePhoneNum',
+	'PayerCity',
+	'PayerAddressLine2',
+	'PayerHomePhoneNum',
+	'PayerZipCode',
+	'PayerAddressLine3',
+	'PayerOfficePhoneNum',
+	'PayerProvinceId',
+	'PayerAddressLine4',
+	'PayerCreditCardNum',
+	'PayersBankId',
+	'PayerFaxNum', 
+	'PayerCreditCardExpDate', 
+	'CreditCardTypeId', 
+	'PayerEmail']
+ 
+/* @ jquery :	fucked 
+ * @ render on ready document
+ * @ will ender by "tabs "   
+ */
+$(document).ready(function(){
+/* @ jquery :	fucked 
+ * @ render on ready document
+ * @ will ender by "tabs "   
+ */
+ $("#tabs" ).tabs();
+/*
+ * @ get all data date picker srializer 
+ * @ is simple get data asumsion 
+ */
+ $(".date").datepicker
+ ({
+    buttonImage		: '../gambar/calendar.gif',  buttonImageOnly : true, changeMonth : true, changeYear		: true, yearRange : '1945:2030', dateFormat : 'dd-mm-yy',
+    onSelect  		: function(e)
+   {
+	 var _a = $(this).attr("id"), _b = _a.substring(0,2), _c = e.split('-');
+	 var _d = _c[2]+'-'+_c[1]+'-'+_c[0];
+	 if( _c.length > 2 )
+	 {			
+		if( _b == Ext.DOM._Holder.chars )
+		{
+			var JSnum = Ext.Ajax({ url : '../class/class.SaveAxa.php', method :'GET', param :{ action:'_get_age', GroupPremi : Ext.DOM._Holder.code, DOB : _d.trim() }}).json();
+				Ext.Cmp('HoldAge').setValue( JSnum.personal_age );
+				Ext.Cmp("HoldPremi").setValue(	
+					Ext.Ajax({ 
+						url 	: '../class/class.SaveAxa.php', method :'GET', 
+						param 	: { 
+							action : '_get_premi', ProductId: Ext.Cmp("ProductId").getValue(),
+							PersonalAge	: Ext.Cmp("HoldAge").getValue(),PayModeId: Ext.Cmp("HoldPayMode").getValue(),
+							PlanTypeId  : Ext.Cmp("HoldPlanType").getValue(), GroupPremi : Ext.DOM._Holder.code 
+						}
+					}).json().personal_premi
+			    );	
+				Ext.Cmp('HoldAge').disabled(true);
+				Ext.Cmp("HoldPremi").disabled(true);
+		}
+			
+		if( _b == Ext.DOM._Spouse.chars ) 
+		{
+			var JSnum = Ext.Ajax({ url : '../class/class.SaveAxa.php', method :'GET', param :{ action:'_get_age', GroupPremi : Ext.DOM._Spouse.code, DOB : _d.trim() }}).json();
+				Ext.Cmp('SpAge').setValue( JSnum.personal_age );
+				Ext.Cmp("SpPremi").setValue(	
+					Ext.Ajax({ 
+						url 	: '../class/class.SaveAxa.php', method :'GET', 
+						param 	: { 
+							action		: '_get_premi', 
+							ProductId	: Ext.Cmp("ProductId").getValue(),
+							PersonalAge	: Ext.Cmp("SpAge").getValue(),	
+							PayModeId	: Ext.Cmp("SpPaymode").getValue(),
+							PlanTypeId  : Ext.Cmp("SpPlanType").getValue(),
+							GroupPremi 	: Ext.DOM._Spouse.code 
+						}
+					}).json().personal_premi
+			   );	
+				Ext.Cmp('SpAge').disabled(true);
+				Ext.Cmp("SpPremi").disabled(true);	
+			
+		}
+			
+		if( _b == Ext.DOM._dependent.chars ) 
+		{
+			var JSnum = Ext.Ajax({ url : '../class/class.SaveAxa.php', method :'GET', param :{ action:'_get_age', GroupPremi : Ext.DOM._dependent.code, DOB : _d.trim() }}).json();	
+				Ext.Cmp('DepAge_'+ _a.split('_')[1]).setValue( JSnum.personal_age );
+				Ext.Cmp("DepPremi_" + _a.split('_')[1]).setValue
+					( 
+						Ext.Ajax({ 
+							url 	: '../class/class.SaveAxa.php', method :'GET', 
+							param 	: { 
+								action		: '_get_premi', 
+								ProductId	: Ext.Cmp("ProductId").getValue(),
+								PayModeId	: Ext.Cmp("DepPaymode_" + _a.split('_')[1]).getValue(),
+								PlanTypeId  : Ext.Cmp("DepPlanType_" + _a.split('_')[1]).getValue(),
+								PersonalAge	: Ext.Cmp("DepAge_" + _a.split('_')[1]).getValue(),
+								GroupPremi 	: Ext.DOM._dependent.code 
+							}
+						}).json().personal_premi
+				   );	
+				Ext.Cmp('DepAge_'+ _a.split('_')[1]).disabled(true);
+				Ext.Cmp('DepPremi_'+ _a.split('_')[1]).disabled(true);	
+		}
+	 }}
+  });
+/* @ Ext 		: autoload   
+ * @ render 	: on ready document
+ * @ will ender by "tabs "   
+ */ 
+Ext.DOM.WindowDisabled = ( function(e){
+ return rad = { 
+	// benefiecery 
+	benefiecery :function(){
+		for( var p =1; p<=e; p++) {  
+		  for( var a in Ext.DOM._benefiecery.field ) {
+			Ext.Cmp(Ext.DOM._benefiecery.field[a]+"_"+p).disabled(true);
+			} 
+		}
+	},
+	// dependent 
+	dependent : function(){
+		for( var p =1; p<=e; p++) {  
+		  for( var a in Ext.DOM._dependent.field ) {
+			Ext.Cmp(Ext.DOM._dependent.field[a]+"_"+p).disabled(true);
+			} 
+		}
+	},
+  // spouse
+	spouse : function(){
+		for( var sp in Ext.DOM._Spouse.field ){
+		  Ext.Cmp(Ext.DOM._Spouse.field[sp]).disabled(true);
+		} 
+	},
+  // holder	
+	holder : function(){
+		for( var Hd in Ext.DOM._Holder.field ) {
+		   Ext.Cmp(Ext.DOM._Holder.field[Hd]).disabled(true);
+		} 
+	}
+	
+  }});
+  
+// disabled first loqding 
+ Ext.DOM.WindowDisabled(4).benefiecery();
+ Ext.DOM.WindowDisabled(4).dependent();
+ Ext.DOM.WindowDisabled(1).spouse();
+ Ext.DOM.WindowDisabled(1).holder();
+ 
+}); 
+// @ stop jquery : fucked  
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.getPremi = function(opts) 
+{
+  var _a = opts.name, _b = _a.substring(0,2), ProductId	= Ext.Cmp('ProductId').getValue();
+  if( _b == Ext.DOM._Holder.chars ) {
+	
+		var PayModeId 	= Ext.Cmp('HoldPayMode').getValue(),
+			PlanType 	= Ext.Cmp('HoldPlanType').getValue(), 
+			PersonalAge = Ext.Cmp('HoldAge').getValue();
+			
+		if( Ext.Cmp('HoldAge').empty() ){ alert("Age Holder is Empty!"); return false; }
+		else if( Ext.Cmp('ProductId').empty() ){ alert("Product ID is Empty!"); return false; }
+		else 
+		{
+			var JSnum = 
+				(	
+					Ext.Ajax({ 
+						url 	: '../class/class.SaveAxa.php', method :'GET', 
+						param 	: { 
+							action		: '_get_premi', 
+							PlanTypeId  : PlanType,
+							PersonalAge	: PersonalAge,	
+							PayModeId	: PayModeId,
+							ProductId	: ProductId,
+							GroupPremi 	: Ext.DOM._Holder.code 
+						}
+					}).json()
+			   );
+			   
+			 Ext.Cmp('HoldPremi').setValue(JSnum.personal_premi);  
+			 Ext.Cmp('HoldPremi').disabled(true); 
+		}	   
+		
+	}
+	
+	if( _b == Ext.DOM._Spouse.chars ) {
+	
+		var PayModeId 	= Ext.Cmp('SpPaymode').getValue(),
+			PlanType 	= Ext.Cmp('SpPlanType').getValue(), 
+			PersonalAge = Ext.Cmp('SpAge').getValue();
+			
+		if( Ext.Cmp('SpAge').empty() ){ alert("Age Spouse is Empty!"); return false; }
+		else if( Ext.Cmp('ProductId').empty() ){ alert("Product ID is Empty!"); return false; }
+		else 
+		{
+			var JSnum = 
+				(	
+					Ext.Ajax({ 
+						url 	: '../class/class.SaveAxa.php', method :'GET', 
+						param 	: { 
+							action		: '_get_premi', 
+							PlanTypeId  : PlanType,
+							PersonalAge	: PersonalAge,	
+							PayModeId	: PayModeId,
+							ProductId	: ProductId,
+							GroupPremi 	: Ext.DOM._Spouse.code
+						}
+					}).json()
+			   );
+			   
+			 Ext.Cmp('SpPremi').setValue(JSnum.personal_premi);  
+			 Ext.Cmp('SpPremi').disabled(true); 
+		}	   
+		
+	}
+	
+	if( _b == Ext.DOM._dependent.chars ) {
+	
+		var PayModeId 	= Ext.Cmp('DepPaymode_'+opts.name.split('_')[1]).getValue(),
+			PlanType 	= Ext.Cmp('DepPlanType_'+opts.name.split('_')[1]).getValue(), 
+			PersonalAge = Ext.Cmp('DepAge_'+opts.name.split('_')[1]).getValue();
+			
+		if( Ext.Cmp('DepAge_'+opts.name.split('_')[1]).empty() ){ alert("Age Dependent " + opts.name.split('_')[1] + " is Empty!"); return false; }
+		else if( Ext.Cmp('ProductId').empty() ){ alert("Product ID is Empty!"); return false; }
+		else 
+		{
+			var JSnum = 
+				(	
+					Ext.Ajax({ 
+						url 	: '../class/class.SaveAxa.php', 
+						method  : 'GET', 
+						param 	: { 
+							action		: '_get_premi', 
+							PlanTypeId  : PlanType,
+							PersonalAge	: PersonalAge,	
+							PayModeId	: PayModeId,
+							ProductId	: ProductId,
+							GroupPremi 	: Ext.DOM._dependent.code
+						}
+					}).json()
+			   );
+			   
+			 Ext.Cmp('DepPremi_'+opts.name.split('_')[1]).setValue(JSnum.personal_premi);  
+			 Ext.Cmp('DepPremi_'+opts.name.split('_')[1]).disabled(true); 
+		}
+	}
+ };
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+ Ext.DOM.Percentage = function() 
+ {
+	var _box = Ext.Cmp('Benefeciery').getValue(), _tot = 0, _percent = 100, _percent_personal = 0 ;
+	if( _box.length!=0 ) {
+		_tot = 	parseInt( _percent ) / parseInt( _box.length );
+		
+		for( var a in _box ) {
+			Ext.Cmp('BenefPercentage_' + _box[a]).setValue(_tot.toFixed(2)); 
+		}
+	}
+ }; 
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.FormBenefiecery = function( checkbox, p)
+{
+	if( checkbox.checked )
+	{
+		for(var i in Ext.DOM._benefiecery.field ){
+			Ext.Cmp(Ext.DOM._benefiecery.field[i]+"_"+p).disabled(false);
+			Ext.Cmp(Ext.DOM._benefiecery.field[i]+"_"+p).setValue('');
+		}
+	}
+	else
+	{
+		for(var i in Ext.DOM._benefiecery.field ) {
+			Ext.Cmp(Ext.DOM._benefiecery.field[i]+"_"+p).disabled(true);
+			Ext.Cmp(Ext.DOM._benefiecery.field[i]+"_"+p).setValue('');
+		}
+	}
+	
+	// calculation
+	Ext.DOM.Percentage();
+};
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.FormDependent = function(checkbox,p)
+ {
+	var PecahPolicy = Ext.Cmp('PecahPolicy').getValue();
+	if( checkbox.checked )
+	{
+		for(var i in Ext.DOM._dependent.field ){
+			Ext.Cmp(Ext.DOM._dependent.field[i]+"_"+p).disabled(false);
+			Ext.Cmp(Ext.DOM._dependent.field[i]+"_"+p).setValue('');
+		}
+		
+		if( PecahPolicy!=1 )
+		{
+			Ext.Cmp("DepPaymode_"+p).setValue(Ext.Cmp('HoldPayMode').getValue());
+			Ext.Cmp("DepPlanType_"+p).setValue(Ext.Cmp('HoldPlanType').getValue());
+			Ext.Cmp("DepMemberOf_"+p).disabled(true);
+			Ext.Cmp("DepMemberOf_"+p).setValue(Ext.DOM._Holder.code);
+		}
+	}
+	else
+	{
+		for(var i in Ext.DOM._dependent.field ) {
+			Ext.Cmp(Ext.DOM._dependent.field[i]+"_"+p).disabled(true);
+			Ext.Cmp(Ext.DOM._dependent.field[i]+"_"+p).setValue('');
+		}
+	}
+ };
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.FormSp = function(Spouse)
+ {
+	var PecahPolicy = Ext.Cmp('PecahPolicy').getValue();
+	
+	if( Spouse.checked )
+	{
+		for(var i in Ext.DOM._Spouse.field ){
+			Ext.Cmp(Ext.DOM._Spouse.field[i]).disabled(false);
+			Ext.Cmp(Ext.DOM._Spouse.field[i]).setValue('');
+		}
+		
+		if( PecahPolicy!=1 ){
+			Ext.Cmp("SpPaymode").setValue(Ext.Cmp('HoldPayMode').getValue());
+			Ext.Cmp("SpPlanType").setValue(Ext.Cmp('HoldPlanType').getValue());
+		}
+	}
+	else
+	{
+		for(var i in Ext.DOM._Spouse.field ) {
+			Ext.Cmp(Ext.DOM._Spouse.field[i]).disabled(true);
+			Ext.Cmp(Ext.DOM._Spouse.field[i]).setValue('');
+		}
+	}
+ };
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.FormHolder = function(Holder)
+ {
+	if( Holder.checked )
+	{
+		for(var i in Ext.DOM._Holder.field ){
+			Ext.Cmp(Ext.DOM._Holder.field[i]).disabled(false);
+			Ext.Cmp(Ext.DOM._Holder.field[i]).setValue('');
+		}
+	}
+	else
+	{
+		for(var i in Ext.DOM._Holder.field ) {
+			Ext.Cmp(Ext.DOM._Holder.field[i]).disabled(true);
+			Ext.Cmp(Ext.DOM._Holder.field[i]).setValue('');
+		}
+	}
+ };
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+ Ext.DOM.CopyData=function( checkbox )
+  {
+	if( checkbox.checked )
+	{
+		Ext.Ajax({
+			url    : '../class/class.SaveAxa.php',
+			method : 'GET',
+			param  : {
+				action : '_get_payer_data', 
+				CustomerId : Ext.Cmp('CustomerId').getValue()
+			},
+			ERROR : function(e){
+				var ERR = JSON.parse(e.target.responseText), p = 0;
+				if( ERR ) {
+					for( var p in ERR){
+						Ext.Cmp(p).setValue(ERR[p]);
+					}
+				}
+			}
+		}).post()
+	}
+	else
+	{
+		for(var p in Ext.DOM._PayersData )
+			Ext.Cmp(Ext.DOM._PayersData[p]).setValue('')
+	}
+  }
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.getSplitProduct = function(opts)
+  {
+	Ext.Ajax({
+		url     : '../class/class.SaveAxa.php',
+		method 	: 'GET',
+		param 	: {
+			action 	  : '_get_split',
+			ProductId : opts.value
+		},
+		ERROR : function(e){
+			var ERR = JSON.parse(e.target.responseText);
+			if( ERR.success )
+			{
+				if( ERR.pecah.toUpperCase() =='ONE-TO-ONE')
+				{
+					Ext.Cmp('PecahPolicy').disabled(false);
+					Ext.Cmp('PecahPolicy').setValue('0');
+				}
+				else{
+					Ext.Cmp('PecahPolicy').disabled(true);
+					Ext.Cmp('PecahPolicy').setValue('0');
+				}
+			}
+			else{
+				Ext.Cmp('PecahPolicy').disabled(true);
+				Ext.Cmp('PecahPolicy').setValue('');
+			}
+		}
+	}).post();
+  };
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.HolderPlanType  = function( PecahPolis)
+{
+	var Dependent = Ext.Cmp('Dependent').getValue();
+	if( PecahPolis !=1)
+	{
+		var 
+			PlanTypeHolder  = Ext.Cmp('HoldPlanType').getValue(),
+			PayModeHolder = Ext.Cmp('HoldPayMode').getValue();
+		// spouse 	
+		if( (Ext.Cmp('Spouse').getElementId().checked) ){
+			Ext.Cmp('SpPlanType').setValue(PlanTypeHolder);
+			Ext.Cmp('SpPaymode').setValue(PayModeHolder);
+		}
+		// dependent
+		var Dependent = Ext.Cmp('Dependent').getValue();
+		if((Dependent.length !=0) )
+		{
+			for( var a in Dependent )
+			{
+				Ext.Cmp("DepPlanType_" + Dependent[a]).setValue(PlanTypeHolder);
+				Ext.Cmp("DepPaymode_"  + Dependent[a]).setValue(PayModeHolder);
+			}
+		}
+	}
+	else
+	{
+	  // spouse 
+		if((Ext.Cmp('Spouse').getElementId().checked) ){
+			Ext.Cmp('SpPlanType').setValue('');
+			Ext.Cmp('SpPaymode').setValue('');
+		}
+	  // dependent
+		if( (Dependent.length !=0) )
+		{
+			for( var a in Dependent )
+			{
+				Ext.Cmp("DepPlanType_" + Dependent[a]).setValue('');
+				Ext.Cmp("DepPaymode_"  + Dependent[a]).setValue('');
+			}
+		}	
+	}
+};
+
+var next_process = false;
+/* @ def 	:  HolderPlanType 
+ *
+ * @ triger : Pecah Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM._get_result_holder = function()
+{
+  if( Ext.Cmp('Holder').Checked() ) 
+  {
+	if( Ext.Cmp('HoldIdentificationTypeId').empty() ){  alert(" Holder ID Type is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldIdentificationNum').empty()){ alert("Holder ID No is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldRelationshipTypeId').empty() ){  alert("Holder Relation is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldSalutationId').empty()){ alert("Holder Title is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldFirstName').empty()){ alert("Holder First Name is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldGenderId').empty()){ alert("Holder Gender is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldDOB').empty()){ alert(" Holder DOB is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldAge').empty()){ alert("* Age is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldPayMode').empty() ){ alert("Holder Payment Mode is empty"); next_process=0; }
+	else if( Ext.Cmp('HoldPlanType').empty()){  alert("Plan Type is empty "); next_process=0; }
+	else if( Ext.Cmp('HoldPremi').empty()){  alert("Holder Premi is empty "); next_process=0; }
+	else{ next_process =1; }
+ }
+ else{ alert("Please select Holder"); next_process =0; }
+ return next_process; 
+ 
+}
+/* @ def 	:  _get_result_spouse 
+ *
+ * @ triger : _get_result_spouse Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM._get_result_spouse = function()
+{
+ if( Ext.Cmp('Spouse').Checked() ) 
+ {
+	if( Ext.Cmp('SpIdentificationTypeId').empty() ){  alert(" Spouse ID Type is empty "); next_process=0;}
+	else if( Ext.Cmp('SpIdentificationNum').empty()){ alert("Spouse ID No is empty "); next_process=0; }
+	else if( Ext.Cmp('SpRelationshipTypeId').empty() ){  alert("Spouse Relation is empty "); next_process=0; }
+	else if( Ext.Cmp('SpSalutationId').empty()){  alert("Spouse Title is empty "); next_process=0; }
+	else if( Ext.Cmp('SpFirstName').empty()){  alert("Spouse First Name is empty "); next_process=0; }
+	else if( Ext.Cmp('SpGenderId').empty()){ alert("Spouse Gender is empty "); next_process=0; }
+	else if( Ext.Cmp('SpDOB').empty()){  alert(" Spouse DOB is empty "); next_process=0; }
+	else if( Ext.Cmp('SpAge').empty()){ alert(" Spouse Age is empty "); next_process=0; }
+	else if( Ext.Cmp('SpPaymode').empty() ){ alert("Spouse Payment Mode is empty"); next_process=0; }
+	else if( Ext.Cmp('SpPlanType').empty()){  alert("Spouse Plan Type is empty "); next_process=0; }
+	else if( Ext.Cmp('SpPremi').empty()){  alert("Spouse Premi is empty "); next_process=0; }
+	else { next_process =1; }
+ }
+ else{ next_process =1;  }
+ 
+ return next_process;
+}
+/* @ def 	:  _get_result_spouse 
+ *
+ * @ triger : _get_result_spouse Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM._get_result_dependent = function()
+{
+  var dep = Ext.Cmp('Dependent').getValue();
+  if( dep.length > 0)
+	{
+		for( var p = 0; p<dep.length; p++ )
+		{
+			if( Ext.Cmp('DepRelationshipTypeId_'+dep[p]).empty() ){  alert(" Dependent Relation " + dep[p] + " is empty "); next_process=0;}
+			else if( Ext.Cmp('DepSalutationId_'+dep[p] ).empty()){ alert("Dependent Title " + dep[p]+ " is empty "); next_process=0; }
+			else if( Ext.Cmp('DepFirstName_'+dep[p]).empty() ){ alert("Dependent First Name " + dep[p] + " is empty "); next_process=0; }
+			else if( Ext.Cmp('DepGenderId_'+dep[p]).empty()){ alert("Dependent Gender " + dep[p] + " is empty "); next_process=0; }
+			else if( Ext.Cmp('DepDOB_'+dep[p]).empty()){  alert("Dependent DOB " + dep[p] + " is empty ");  next_process=0; }
+			else if( Ext.Cmp('DepAge_'+dep[p]).empty()){  alert("Dependent Age " + dep[p] + " is empty ");  next_process=0;	}
+			else if( Ext.Cmp('DepMemberOf_'+dep[p]).empty()){  alert("Member Of " + dep[p] + " is empty ");  next_process=0;	}
+			else if( Ext.Cmp('DepPaymode_'+dep[p]).empty()){ alert(" Dependent Payment Mode is empty "); next_process=0; }
+			else if( Ext.Cmp('DepPlanType_'+dep[p]).empty()){  alert(" Dependent Plan Type " + dep[p] + " is empty "); next_process=0; }
+			else if( Ext.Cmp('DepPremi_'+dep[p]).empty() ){ alert("Dependent Premi " + dep[p] + " is empty");  next_process=0; }
+			else{ next_process =1;  }
+		}
+	}
+	else { next_process =1;  }
+	
+	return next_process; 
+ }
+/* @ def 	:  _get_result_spouse 
+ *
+ * @ triger : _get_result_spouse Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM._get_result_payers = function()
+{
+	if( Ext.Cmp('PayerSalutationId').empty() ){ alert('PayerSalutationId'); next_process =0;  }
+	else if(Ext.Cmp('PayerFirstName').empty()){ alert('PayerFirstName'); next_process =0; }
+	else if(Ext.Cmp('PayerLastName').empty()){ alert('PayerLastName'); next_process =0; }
+	else if(Ext.Cmp('PayerGenderId').empty()){ alert('PayerGenderId'); next_process =0; }
+	else if(Ext.Cmp('PayerDOB').empty()){ alert('PayerDOB'); next_process =0; }
+	else if(Ext.Cmp('PayerAddressLine1').empty()){ alert('PayerAddressLine1'); next_process =0; }
+	else if(Ext.Cmp('PayerIdentificationTypeId').empty()){ alert('PayerIdentificationTypeId'); next_process =0; }
+	else if(Ext.Cmp('PayerIdentificationNum').empty()){ alert('PayerIdentificationNum'); next_process =0; }
+	else if(Ext.Cmp('PayerMobilePhoneNum').empty()){  alert('PayerMobilePhoneNum'); next_process =0; }
+	else if(Ext.Cmp('PayerCity').empty()){  alert('PayerCity'); next_process =0;  }
+	else if(Ext.Cmp('PayerAddressLine2').empty()){  alert('PayerAddressLine2'); next_process =0; }
+	else if(Ext.Cmp('PayerHomePhoneNum').empty()){  alert('PayerHomePhoneNum'); next_process =0; }
+	else if(Ext.Cmp('PayerZipCode').empty()){ alert('PayerZipCode'); next_process =0; }
+	else if(Ext.Cmp('PayerAddressLine3').empty()){ alert('PayerAddressLine3'); next_process =0; }
+	else if(Ext.Cmp('PayerOfficePhoneNum').empty()){ alert('PayerOfficePhoneNum'); next_process =0;  }
+	else if(Ext.Cmp('PayerProvinceId').empty()){ alert('PayerProvinceId'); next_process =0; }
+	else if(Ext.Cmp('PayerAddressLine4').empty()){ alert('PayerAddressLine4'); next_process =0; }
+	else if(Ext.Cmp('PayerCreditCardNum').empty()){ alert('PayerCreditCardNum'); next_process =0; }
+	else if(Ext.Cmp('PayersBankId').empty()){ alert('PayersBankId'); next_process =0; }
+	else if(Ext.Cmp('PayerFaxNum').empty()){ alert('PayerFaxNum '); next_process =0;}
+	else if(Ext.Cmp('PayerCreditCardExpDate').empty()){ alert('Expiration Date'); next_process =0; }
+	else if(Ext.Cmp('CreditCardTypeId').empty()){ alert('CreditCardTypeId '); next_process =0; }
+	else if(Ext.Cmp('PayerEmail').empty()){ alert('PayerEmail');  next_process =0; }
+	else{ next_process =1;  }
+	
+	return next_process;
+ }
+/* @ def 	:  SavePolis 
+ *
+ * @ triger : SavePolis Policy
+ * @ params : jika terjadi pecah polis
+ */
+Ext.DOM.SavePolis = function()
+{
+ var send_vars=[];
+ 
+  send_vars['HoldGroup'] = Ext.DOM._Holder.code;
+  send_vars['SpGroup'] = Ext.DOM._Spouse.code;
+  send_vars['DepGroup'] = Ext.DOM._dependent.code;
+  send_vars['BenefBox'] = Ext.Cmp('Benefeciery').getValue();
+  send_vars['dependent'] = Ext.Cmp('Dependent').getValue();
+  send_vars['pyisholder'] = Ext.Cmp('CopyData').Checked();
+  send_vars['action'] = '_savePolis';
+
+  if( Ext.Cmp('ProductId').empty() ){ alert("Product is empty "); return false; }
+  else if(!Ext.DOM._get_result_holder()){ return false; }
+  else if(!Ext.DOM._get_result_spouse()){ return false; }
+  else if(!Ext.DOM._get_result_dependent()){ return false; }
+  else if(!Ext.DOM._get_result_payers()){ return false; }
+  else
+  {
+		Ext.Ajax
+		({
+			url    : '../class/class.SaveAxa.php',
+			method : 'POST',
+			param  : ( Ext.Join
+						 ( 
+							new Array
+							( 
+								send_vars,
+								Ext.Serialize('form_data_product').getElement(),
+								Ext.Serialize('form_data_payer').getElement(),
+								(Ext.Cmp('Holder').Checked() ? Ext.Serialize('form_data_holder').getElement() : new Array()),
+								(Ext.Cmp('Spouse').Checked() ? Ext.Serialize('form_data_spouse').getElement() : new Array()),
+								(Ext.Cmp('Dependent').Checked() ? Ext.Serialize('form_data_dependent').getElement() : new Array()),
+								(Ext.Cmp('Benefeciery').Checked() ? Ext.Serialize('form_data_benefiecery').getElement() : new Array())
+							)
+						 ).object()
+					  ),
+			ERROR : function( e ){
+				var ERR = JSON.parse(e.target.responseText), message ='';
+				if( ERR.success==1) {
+					for( var a in ERR.polis ) { message += ERR.polis[a]+"\n";  }	
+					alert("Sucess, Create Polis , with number polis :\n" + message );
+					return false;
+				}
+				else if( ERR.success==2 ){
+					for( var a in ERR.polis ){ message += ERR.polis[a]+"\n"; }	
+					alert("Info, Polis alerdy exist , with number polis :\n" + message );
+					return false;
+				}
+				else {
+					alert("Failed, Create Polis. please try again !")
+					return false;
+				}
+			}	
+			
+		}).post();
+  }
+};

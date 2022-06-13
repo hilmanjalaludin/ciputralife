@@ -1,0 +1,85 @@
++===================================================================================+
+|	Jum'at, 30-05-2014																|
+|	Wisnu																			|
++===================================================================================+
+- edit dta_suspend_nav.php, dta_suspend_list.php, dta_qc_approval_nav.php, dta_qc_approval_list.php
+  remark c.CampaignStatusFlag in $filter.
+  
++===================================================================================+
+|	Rabu, 21-05-2014																|
+|	fajar																			|
++===================================================================================+
+- edit dta.contact.detail (validasi saat save reason)
++===================================================================================+
+|	Selasa, 20-05-2014																|
+|	wisnu, fajar																	|
++===================================================================================+
+  - update database QaProsessId from tinyint to int
+  - edit dob insured jika dob payer pada saat upload adalah 0000-00-00
+####################################################################################
+
++===================================================================================+
+|	Senin, 19-05-2014																|
+|	fajar																			|
++===================================================================================+
+Update tpl.contact.detail.php (add Code And Vintage field
+
+########################################################################
+2014-05-03
+==========
+ DB
+	-> t_gn_customer => field UploadId
+	-> t_gn_uploadreport => field CampaignId
+ APP
+	-> class.app.upload.php
+########################################################################
+
+/* 2014-01-13 < omens >
+	* edit policy & preview Policy on QA
+	* Report performance_by_hour 
+	
+	
+
+29-10-2013 :<omens>
+#######################################################################
+	#tambah field SUspendFlags t_lk_approvestatus
+	
+03-11-2013 : <omens> 
+#######################################################################
+	
+	# tambah file php untuk Assign Campaign 
+	  1. "../php/" mgt_assign_campaign.php	
+	  2. "../class/" class.assign.campaign.php	
+	  
+	# tambah satu table : " t_gn_assign_campaign "  
+	  untuk assign campaign pada agent
+	 
+	 
+	# update Tambah function di " db.entity.factory.php "
+	# tambah "field ": "CallReasonFollowUp" di "t_lk_callreason" 
+	  0 => tidak boleh difollow up
+	  1 => boleh di follow up	
+	  
+	# claass/tpl.contact.detail  " NextCustomers " Line 175 
+	# "php/dta_contact_detail.php" yang lama di rename menjadi "dta_contact_detail__03112013.php"
+	
+	# handle menu navigation :
+		1. Tambah Menu Navigation "php/src_customer_precall.php"
+		2. Update index line 324: javascript handling  "class_active{}" 
+
+#######################################################################		
+04-11-2013 : <omens> 	
+	
+	# udpate Assign Campaign "factory/db.entity.factory.php " LINE : 404
+	# update handle call result if Interes Can't call Again "php/dta.contact.detail.php"; LINE : 434
+    # CC expired 1 month "class/class.frm.policy.php" LINE : 885
+	# Expired Campaign 2 Month "class/class.campaign.upload.php" LINE : 55
+	# Update Register User By APP to PBX "/class/class.user.system.php" LINE : 211
+    # Release Ext By APPS "/class/class.extension.system.php"	LINE : 182 
+	
++===================================================================================+
+|	Senin, 18-11-2013																|
+|	abie																			|
++===================================================================================+
+	- update combo php/frm.edit.policy.php
+	

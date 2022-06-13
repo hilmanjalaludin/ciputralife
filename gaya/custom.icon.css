@@ -1,0 +1,102 @@
+/** icon css */
+
+.icon-application {
+	background:url('../gambar/icon/application_edit.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.icon-customers {
+	background:url('../gambar/icon/group.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.script-icon{
+	background:url(../icon/note.png) no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.icon-callresult{
+	background:url('../gambar/icon/aux-p.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+
+}
+
+.icon-userapplication {
+	background:url('../gambar/icon/group_key.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+.icon-product {
+	background:url('../gambar/icon/application_add.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+
+.icon-menulist {
+	background:url('../gambar/icon/app.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.icon-campaign {
+	background:url('../gambar/icon/database_add.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.icon-callactivity {
+	background:url('../gambar/icon/book_open.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+.icon-benefit{
+	background:url('../gambar/icon/award_star_bronze_1.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.icon-phone {
+	background:url('../gambar/icon/ipod_sound.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+
+.button-call{
+	border:0px;
+	background:url('../gambar/dial-icon.png') no-repeat top left;
+	cursor:pointer;
+	width:75px;
+	height:35px;
+}
+.icon-brodcastmsg{
+	background:url('../gambar/icon/email_go.png') no-repeat top left;
+	height:24px;
+	padding-left:12px;
+	font-family:Arial;
+}
+
+.button-hangup{
+	border:1px;
+	background:url('../gambar/hangup-icon.png') no-repeat top left;
+	cursor:pointer;
+	width:75px;
+	height:35px;
+}
+
